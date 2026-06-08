@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학교 업무 도움 데스크 매니저</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        /* 배경 장식 */
+        .bg-nature-wrap {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden;
+            background: linear-gradient(180deg, #eaf5f0 0%, #f2f8f5 15%, #f7faf9 40%, #f4f9f6 70%, #eef6f1 100%);
+        }
+        .bg-nature-wrap > div, .bg-nature-wrap > svg { position: absolute; }
+        .bg-mountain-left { top: 0; left: 0; width: 350px; height: 300px; }
+        .bg-mountain-right { top: 0; right: 0; width: 300px; height: 280px; }
+        .bg-bottom-left { bottom: 0; left: 0; width: 400px; height: 300px; }
+        .bg-bottom-right { bottom: 0; right: 0; width: 380px; height: 280px; }
+        .bg-mid-left { top: 40%; left: 0; width: 200px; height: 250px; transform: translateY(-50%); }
+        .bg-mid-right { top: 45%; right: 0; width: 180px; height: 220px; transform: translateY(-50%); }
+        .school-illustration { position: absolute; top: 40px; right: 80px; width: 140px; height: 140px; z-index: 1; pointer-events: none; }
+        @media (max-width: 768px) {
+            .school-illustration { width: 90px; height: 90px; top: 20px; right: 20px; }
+            .bg-mountain-left { width: 200px; height: 180px; }
+            .bg-mountain-right { width: 180px; height: 160px; }
+            .bg-bottom-left { width: 250px; height: 200px; }
+            .bg-bottom-right { width: 230px; height: 180px; }
+            .bg-mid-left { width: 120px; height: 160px; }
+            .bg-mid-right { width: 110px; height: 140px; }
+        }
+        /* 애니메이션 */
+        @keyframes cardEntrance { 0% { opacity: 0; transform: translateY(30px) scale(0.95); } 60% { opacity: 1; transform: translateY(-6px) scale(1.02); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        .card-entrance { opacity: 0; animation: cardEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .slide-content { display: grid; grid-template-rows: 0fr; opacity: 0; transform: translateY(-8px); transition: grid-template-rows 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .slide-content > * { overflow: hidden; }
+        .slide-content.open { grid-template-rows: 1fr; opacity: 1; transform: translateY(0); transition: grid-template-rows 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease 0.05s, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        /* 토스트 알림 */
+        #toast { transition: opacity 0.3s, transform 0.3s; transform: translateY(100%); opacity: 0; pointer-events: none; }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        /* 로딩 스피너 */
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen" style="background: #f7faf9;">
+    <!-- 동적 클래스 컴파일 세이프리스트 -->
+    <div class="hidden lg:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 lg:grid-cols-5 lg:grid-cols-6 md:grid-cols-1 md:grid-cols-2 md:grid-cols-3 md:grid-cols-4"></div>
+
+    <div class="bg-nature-wrap">
+        <div class="bg-mountain-left"><svg viewBox="0 0 400 320" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.7;"><ellipse cx="60" cy="0" rx="200" ry="120" fill="url(#cloudL1)"/><path d="M0 320 L0 140 Q30 80 80 100 Q130 50 180 90 Q220 40 270 80 Q310 60 350 100 Q380 130 400 160 L400 320Z" fill="url(#mountainL1)"/><path d="M0 320 L0 180 Q40 130 100 160 Q150 110 200 140 Q250 100 300 140 L350 320Z" fill="url(#mountainL2)"/><path d="M0 320 L0 220 Q50 180 120 210 Q180 170 250 200 L300 320Z" fill="url(#mountainL3)"/><defs><linearGradient id="cloudL1" x1="0" y1="0" x2="200" y2="120"><stop offset="0%" stop-color="#b8dce8" stop-opacity="0.4"/><stop offset="100%" stop-color="#d4eef5" stop-opacity="0.1"/></linearGradient><linearGradient id="mountainL1" x1="100" y1="40" x2="100" y2="320"><stop offset="0%" stop-color="#8cc5a8" stop-opacity="0.35"/><stop offset="100%" stop-color="#b5dcc5" stop-opacity="0.1"/></linearGradient><linearGradient id="mountainL2" x1="80" y1="100" x2="80" y2="320"><stop offset="0%" stop-color="#a3d4b7" stop-opacity="0.3"/><stop offset="100%" stop-color="#c8e6d2" stop-opacity="0.08"/></linearGradient><linearGradient id="mountainL3" x1="60" y1="170" x2="60" y2="320"><stop offset="0%" stop-color="#bce0cb" stop-opacity="0.25"/><stop offset="100%" stop-color="#ddf0e3" stop-opacity="0.05"/></linearGradient></defs></svg></div>
+        <div class="bg-mountain-right"><svg viewBox="0 0 350 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.6;"><ellipse cx="300" cy="0" rx="180" ry="100" fill="url(#cloudR1)"/><path d="M0 160 Q40 80 100 110 Q150 50 200 80 Q250 30 300 70 Q330 50 350 80 L350 300 L0 300Z" fill="url(#mountainR1)"/><path d="M50 300 Q80 140 150 170 Q200 120 260 150 Q310 110 350 140 L350 300Z" fill="url(#mountainR2)"/><path d="M100 300 Q140 200 200 220 Q260 180 320 210 L350 300Z" fill="url(#mountainR3)"/><defs><linearGradient id="cloudR1" x1="200" y1="0" x2="350" y2="100"><stop offset="0%" stop-color="#a8d1e0" stop-opacity="0.3"/><stop offset="100%" stop-color="#c8e4ef" stop-opacity="0.08"/></linearGradient><linearGradient id="mountainR1" x1="200" y1="30" x2="200" y2="300"><stop offset="0%" stop-color="#7fbfdb" stop-opacity="0.3"/><stop offset="100%" stop-color="#b5d8e8" stop-opacity="0.08"/></linearGradient><linearGradient id="mountainR2" x1="200" y1="110" x2="200" y2="300"><stop offset="0%" stop-color="#95cada" stop-opacity="0.25"/><stop offset="100%" stop-color="#c5e2ed" stop-opacity="0.05"/></linearGradient><linearGradient id="mountainR3" x1="220" y1="180" x2="220" y2="300"><stop offset="0%" stop-color="#a8d5e2" stop-opacity="0.2"/><stop offset="100%" stop-color="#d5ebf2" stop-opacity="0.03"/></linearGradient></defs></svg></div>
+        <div class="bg-mid-left"><svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.5;"><path d="M0 0 Q20 40 10 80 Q30 60 50 90 Q40 120 20 140 Q35 130 60 150 Q30 180 0 200 L0 0Z" fill="url(#midL1)"/><ellipse cx="0" cy="100" rx="80" ry="60" fill="url(#midL2)"/><ellipse cx="10" cy="160" rx="60" ry="40" fill="url(#midL3)"/><defs><linearGradient id="midL1" x1="0" y1="0" x2="60" y2="200"><stop offset="0%" stop-color="#8cc5a8" stop-opacity="0.4"/><stop offset="100%" stop-color="#b5dcc5" stop-opacity="0.1"/></linearGradient><radialGradient id="midL2" cx="0" cy="0.5" r="1"><stop offset="0%" stop-color="#a3d4b7" stop-opacity="0.25"/><stop offset="100%" stop-color="#c8e6d2" stop-opacity="0"/></radialGradient><radialGradient id="midL3" cx="0.1" cy="0.5" r="1"><stop offset="0%" stop-color="#90c8ae" stop-opacity="0.2"/><stop offset="100%" stop-color="#c5e3d0" stop-opacity="0"/></radialGradient></defs></svg></div>
+        <div class="bg-mid-right"><svg viewBox="0 0 180 220" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.45;"><path d="M180 20 Q160 50 170 90 Q150 70 130 100 Q145 130 165 150 Q140 140 120 160 Q150 190 180 210 L180 20Z" fill="url(#midR1)"/><ellipse cx="180" cy="110" rx="70" ry="55" fill="url(#midR2)"/><defs><linearGradient id="midR1" x1="180" y1="20" x2="120" y2="210"><stop offset="0%" stop-color="#7fbfdb" stop-opacity="0.35"/><stop offset="100%" stop-color="#b5d8e8" stop-opacity="0.08"/></linearGradient><radialGradient id="midR2" cx="1" cy="0.5" r="1"><stop offset="0%" stop-color="#95cada" stop-opacity="0.2"/><stop offset="100%" stop-color="#c5e2ed" stop-opacity="0"/></radialGradient></defs></svg></div>
+        <div class="bg-bottom-left"><svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.55;"><ellipse cx="50" cy="300" rx="180" ry="100" fill="url(#blCloud1)"/><path d="M0 120 Q40 160 30 200 Q60 170 90 190 Q120 150 160 180 Q190 140 230 170 Q200 220 160 250 Q100 280 0 300 L0 120Z" fill="url(#blMtn1)"/><path d="M0 180 Q50 200 40 240 Q80 210 120 230 Q100 260 60 280 L0 300 L0 180Z" fill="url(#blMtn2)"/><ellipse cx="200" cy="280" rx="120" ry="40" fill="url(#blGrass)"/><defs><radialGradient id="blCloud1" cx="0.2" cy="1" r="1"><stop offset="0%" stop-color="#b8dce8" stop-opacity="0.25"/><stop offset="100%" stop-color="#d4eef5" stop-opacity="0"/></radialGradient><linearGradient id="blMtn1" x1="0" y1="120" x2="100" y2="300"><stop offset="0%" stop-color="#8cc5a8" stop-opacity="0.35"/><stop offset="100%" stop-color="#bce0cb" stop-opacity="0.1"/></linearGradient><linearGradient id="blMtn2" x1="0" y1="180" x2="60" y2="300"><stop offset="0%" stop-color="#a3d4b7" stop-opacity="0.3"/><stop offset="100%" stop-color="#d0ebd8" stop-opacity="0.05"/></linearGradient><radialGradient id="blGrass" cx="0.5" cy="0.8" r="0.8"><stop offset="0%" stop-color="#a8d5b8" stop-opacity="0.2"/><stop offset="100%" stop-color="#c8e6d2" stop-opacity="0"/></radialGradient></defs></svg></div>
+        <div class="bg-bottom-right"><svg viewBox="0 0 380 280" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.5;"><ellipse cx="330" cy="280" rx="160" ry="90" fill="url(#brCloud1)"/><path d="M380 100 Q340 140 350 180 Q310 150 270 170 Q240 140 200 160 Q230 200 270 230 Q320 260 380 280 L380 100Z" fill="url(#brMtn1)"/><path d="M380 170 Q340 190 350 230 Q310 210 270 230 Q300 260 340 270 L380 280 L380 170Z" fill="url(#brMtn2)"/><defs><radialGradient id="brCloud1" cx="0.85" cy="1" r="1"><stop offset="0%" stop-color="#a8d1e0" stop-opacity="0.22"/><stop offset="100%" stop-color="#c8e4ef" stop-opacity="0"/></radialGradient><linearGradient id="brMtn1" x1="380" y1="100" x2="280" y2="280"><stop offset="0%" stop-color="#7fbfdb" stop-opacity="0.3"/><stop offset="100%" stop-color="#b5d8e8" stop-opacity="0.08"/></linearGradient><linearGradient id="brMtn2" x1="380" y1="170" x2="300" y2="280"><stop offset="0%" stop-color="#95cada" stop-opacity="0.25"/><stop offset="100%" stop-color="#c5e2ed" stop-opacity="0.05"/></linearGradient></defs></svg></div>
+    </div>
+    
+    <!-- 학교 일러스트 -->
+    <div class="school-illustration">
+        <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+            <rect x="15" y="90" width="8" height="30" rx="2" fill="#8B6F47"/><ellipse cx="19" cy="78" rx="16" ry="22" fill="#5DAE6B"/><ellipse cx="14" cy="82" rx="12" ry="16" fill="#4A9B58"/>
+            <rect x="135" y="95" width="7" height="25" rx="2" fill="#8B6F47"/><ellipse cx="138" cy="84" rx="14" ry="18" fill="#5DAE6B"/><ellipse cx="142" cy="88" rx="10" ry="14" fill="#4A9B58"/>
+            <rect x="35" y="65" width="90" height="55" rx="3" fill="#F5E6C8"/><rect x="35" y="65" width="90" height="55" rx="3" stroke="#D4C4A0" stroke-width="1"/>
+            <path d="M30 68 L80 30 L130 68Z" fill="#E8524A"/><path d="M30 68 L80 30 L130 68Z" stroke="#D4443C" stroke-width="1"/>
+            <rect x="75" y="22" width="10" height="12" rx="1" fill="#FFD93D"/><polygon points="80,14 74,22 86,22" fill="#FFD93D"/>
+            <circle cx="80" cy="50" r="10" fill="white" stroke="#D4C4A0" stroke-width="1.5"/>
+            <line x1="80" y1="50" x2="80" y2="43" stroke="#555" stroke-width="1.5" stroke-linecap="round"/><line x1="80" y1="50" x2="85" y2="52" stroke="#555" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="42" y="75" width="14" height="14" rx="2" fill="#87CEEB" stroke="#D4C4A0" stroke-width="1"/>
+            <line x1="49" y1="75" x2="49" y2="89" stroke="#D4C4A0" stroke-width="0.8"/><line x1="42" y1="82" x2="56" y2="82" stroke="#D4C4A0" stroke-width="0.8"/>
+            <rect x="62" y="75" width="14" height="14" rx="2" fill="#87CEEB" stroke="#D4C4A0" stroke-width="1"/>
+            <line x1="69" y1="75" x2="69" y2="89" stroke="#D4C4A0" stroke-width="0.8"/><line x1="62" y1="82" x2="76" y2="82" stroke="#D4C4A0" stroke-width="0.8"/>
+            <rect x="104" y="75" width="14" height="14" rx="2" fill="#87CEEB" stroke="#D4C4A0" stroke-width="1"/>
+            <line x1="111" y1="75" x2="111" y2="89" stroke="#D4C4A0" stroke-width="0.8"/><line x1="104" y1="82" x2="118" y2="82" stroke="#D4C4A0" stroke-width="0.8"/>
+            <rect x="84" y="96" width="16" height="24" rx="8 8 0 0" fill="#6B4226"/><circle cx="96" cy="110" r="1.5" fill="#FFD93D"/>
+            <ellipse cx="80" cy="122" rx="70" ry="6" fill="#7BC67E"/><ellipse cx="80" cy="124" rx="75" ry="5" fill="#6AB86D"/>
+            <ellipse cx="30" cy="25" rx="18" ry="8" fill="white" opacity="0.8"/><ellipse cx="140" cy="20" rx="14" ry="6" fill="white" opacity="0.7"/>
+        </svg>
+    </div>
+
+    <!-- 헤더 영역 -->
+    <header class="relative pt-12 pb-8" style="z-index:2;">
+        <!-- 설정 버튼 -->
+        <div class="absolute top-6 right-6 z-20">
+            <button onclick="window.handleGearClick()" class="bg-white/90 hover:bg-white p-3 rounded-full shadow-sm text-gray-500 hover:text-blue-600 transition-colors" title="설정 메뉴 열기">
+                <i class="fas fa-cog text-xl"></i>
+            </button>
+        </div>
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h1 onclick="location.reload()" class="text-3xl md:text-4xl font-bold text-gray-800 tracking-tight cursor-pointer hover:text-blue-600 transition-colors inline-block" title="초기화면으로 돌아가기">학교 업무 도움 데스크 매니저</h1>
+            <p class="text-gray-500 mt-3 text-lg">학교 업무에 필요한 자료를 쉽게 찾아보세요!</p>
+        </div>
+    </header>
+
+    <!-- 동적 렌더링 메인 컨테이너 -->
+    <main class="max-w-6xl mx-auto px-4 pb-24 relative" style="z-index: 2;">
+        <!-- 최초 로딩 화면 / 에러 메시지 통합 컨테이너 -->
+        <div id="loading-indicator" class="flex flex-col items-center justify-center py-20 text-center">
+            <div class="loader mb-4" id="loading-spinner"></div>
+            <p class="text-gray-500 font-medium" id="loading-text">데이터를 불러오는 중입니다...</p>
+        </div>
+        
+        <div id="main-grid" class="grid gap-6 hidden">
+            <!-- 자바스크립트를 통해 메뉴 카드가 렌더링됩니다 -->
+        </div>
+    </main>
+
+    <footer class="bg-white/60 backdrop-blur-md border-t border-gray-200/50 fixed bottom-0 left-0 w-full flex items-center justify-between" style="z-index: 10;">
+        <div class="max-w-6xl w-full mx-auto px-4 py-5">
+            <p class="text-center text-gray-500 text-sm font-medium">© Netsci 모든 권리 보유</p>
+        </div>
+    </footer>
+
+    <!-- 관리자 로그인 모달창 -->
+    <div id="login-modal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm relative">
+            <button onclick="document.getElementById('login-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700"><i class="fas fa-times"></i></button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 text-blue-600 text-xl"><i class="fas fa-user-shield"></i></div>
+                <h3 class="text-xl font-bold text-gray-800">관리자 로그인</h3>
+                <p class="text-xs text-gray-500 mt-1">설정 변경은 관리자만 가능합니다.</p>
+            </div>
+            <input type="email" id="admin-email" placeholder="Firebase 계정 이메일" class="w-full mb-3 px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <input type="password" id="admin-pw" placeholder="비밀번호" class="w-full mb-6 px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <button onclick="window.loginAdmin()" id="login-btn" class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-sm">로그인</button>
+        </div>
+    </div>
+
+    <!-- 설정 모달창 -->
+    <div id="settings-modal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 hidden overflow-y-auto custom-scrollbar pt-10 pb-10">
+        <div class="min-h-screen px-4 text-center flex items-start justify-center">
+            <div class="inline-block w-full max-w-4xl text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl relative">
+                <!-- 헤더 -->
+                <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50 rounded-t-2xl sticky top-0 z-10">
+                    <h3 class="text-lg font-bold text-gray-900"><i class="fas fa-tools mr-2 text-gray-500"></i> 메뉴 및 화면 설정 (Firebase 연동)</h3>
+                    <button onclick="window.closeSettings()" class="text-gray-400 hover:text-gray-700 bg-white border rounded-lg p-2 leading-none"><i class="fas fa-times"></i></button>
+                </div>
+                <!-- 설정 본문 -->
+                <div class="p-6 bg-white" id="settings-body">
+                    <!-- 자바스크립트로 렌더링 -->
+                </div>
+                <!-- 푸터 -->
+                <div class="px-6 py-4 bg-gray-50 border-t rounded-b-2xl flex justify-between items-center sticky bottom-0 z-10">
+                    <button onclick="window.logoutAdmin()" class="px-4 py-2 text-red-500 font-medium hover:bg-red-50 rounded-lg transition-colors text-sm"><i class="fas fa-sign-out-alt mr-1"></i> 로그아웃</button>
+                    <div class="flex gap-2">
+                        <button onclick="window.closeSettings()" class="px-5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition-colors">취소</button>
+                        <button id="save-btn" onclick="window.saveSettings()" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm min-w-[120px]">
+                            변경사항 저장
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 알림 메시지 (토스트) -->
+    <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-3">
+        <i class="fas fa-check-circle text-green-400" id="toast-icon"></i>
+        <span id="toast-msg" class="text-sm font-medium">알림 메시지</span>
+    </div>
+
+    <!-- Firebase SDK (ES Module) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // 선생님께서 제공해주신 Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyCKgtDNEDXHRZ9boxOaE8dyDTn2te9fE84",
+            authDomain: "school-website-manager.firebaseapp.com",
+            projectId: "school-website-manager",
+            storageBucket: "school-website-manager.firebasestorage.app",
+            messagingSenderId: "1015808043463",
+            appId: "1:1015808043463:web:a7c869aaec010e0d1a11e2"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        const settingsRef = doc(db, 'school_settings', 'main');
+
+        const palette = {
+            blue: { bg: 'bg-blue-50', text: 'text-blue-500' },
+            green: { bg: 'bg-green-50', text: 'text-green-500' },
+            purple: { bg: 'bg-purple-50', text: 'text-purple-500' },
+            orange: { bg: 'bg-orange-50', text: 'text-orange-500' },
+            amber: { bg: 'bg-amber-50', text: 'text-amber-500' },
+            red: { bg: 'bg-red-50', text: 'text-red-500' },
+            gray: { bg: 'bg-gray-50', text: 'text-gray-500' },
+            teal: { bg: 'bg-teal-50', text: 'text-teal-500' }
+        };
+
+        const defaultState = {
+            columns: 3, rows: 2,
+            categories: [
+                { id: 'cat_1', title: '유치원', subtitle: '유치원 관련 업무자료', icon: 'fa-child', color: 'blue', items: [{ title: '유치원 교육과정 운영 안내', link: '#' }] },
+                { id: 'cat_2', title: '초등학교', subtitle: '초등학교 관련 업무자료', icon: 'fa-book', color: 'green', items: [{ title: '초등 학사 운영 매뉴얼', link: '#' }] },
+                { id: 'cat_3', title: '중고등학교', subtitle: '중고등학교 관련 업무자료', icon: 'fa-chalkboard', color: 'purple', items: [{ title: '중고교 학업성적 관리', link: '#' }] }
+            ]
+        };
+
+        // 전역 상태 변수
+        window.appState = null;
+        window.draftState = null;
+        
+        function handleFirebaseError(error) {
+            const loading = document.getElementById('loading-indicator');
+            if(!loading) return;
+            
+            loading.innerHTML = `
+                <div class="text-red-500 mb-4"><i class="fas fa-exclamation-triangle text-5xl"></i></div>
+                <p class="text-gray-800 font-bold text-lg mb-2">데이터베이스 연결 오류</p>
+                <p class="text-sm text-gray-500 max-w-md text-center leading-relaxed">
+                    Firebase Console에서 Firestore Database를 생성했는지, 또는 규칙(Rules)이 올바른지 확인해주세요.
+                </p>
+            `;
+        }
+
+        // 인증 필요 없이 모든 사용자가 데이터를 볼 수 있도록 바로 구독합니다.
+        onSnapshot(settingsRef, (snapshot) => {
+            const loading = document.getElementById('loading-indicator');
+            const grid = document.getElementById('main-grid');
+            
+            if (snapshot.exists()) {
+                window.appState = snapshot.data();
+            } else {
+                window.appState = defaultState;
+                // 관리자로 로그인된 상태에서만 최초 데이터를 저장 시도
+                if(auth.currentUser) {
+                    setDoc(settingsRef, defaultState).catch(err => console.error(err));
+                }
+            }
+            
+            if(loading) loading.classList.add('hidden');
+            if(grid) grid.classList.remove('hidden');
+            renderMain();
+            
+        }, (error) => {
+            console.error("Firestore Error:", error);
+            handleFirebaseError(error);
+        });
+
+        // 1. 메인 화면 렌더링
+        function renderMain() {
+            if(!window.appState) return;
+            const grid = document.getElementById('main-grid');
+            grid.className = `grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-${window.appState.columns}`;
+            
+            const limit = window.appState.columns * window.appState.rows;
+            const visibleCategories = window.appState.categories.slice(0, limit);
+
+            grid.innerHTML = visibleCategories.map((cat, index) => {
+                const colors = palette[cat.color] || palette.blue;
+                return `
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200 card-entrance" style="animation-delay: ${index * 60}ms;">
+                    <button onclick="window.toggleSection('${cat.id}')" class="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200 rounded-t-xl">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 ${colors.bg} rounded-full flex items-center justify-center mr-4">
+                                <i class="fas ${cat.icon} ${colors.text} text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">${cat.title}</h3>
+                                <p class="text-sm text-gray-500 mt-1">${cat.subtitle}</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" id="${cat.id}-arrow"></i>
+                    </button>
+                    <div id="${cat.id}-content" class="slide-content bg-white rounded-b-xl border-t border-gray-50">
+                        <div class="p-4 max-h-[300px] overflow-y-auto custom-scrollbar">
+                            ${cat.items.length > 0 ? cat.items.map(item => `
+                                <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="block p-3.5 mb-2.5 bg-white border border-gray-100 rounded-lg hover:bg-gray-50 hover:border-gray-200 transition-all duration-200 text-sm text-gray-700 shadow-sm hover:shadow group flex items-center">
+                                    <i class="fas fa-file-alt mr-3 ${colors.text} opacity-70 group-hover:opacity-100 transition-opacity"></i>
+                                    <span class="font-medium">${item.title}</span>
+                                </a>
+                            `).join('') : '<p class="text-center text-gray-400 text-sm py-6">등록된 하위 메뉴가 없습니다.</p>'}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            if(visibleCategories.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-20 text-center text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100"><i class="fas fa-exclamation-circle text-3xl mb-3 text-gray-300"></i><p>설정된 주메뉴가 없습니다. 우측 상단 설정에서 메뉴를 추가해주세요.</p></div>`;
+            }
+        }
+
+        window.toggleSection = function(id) {
+            const content = document.getElementById(`${id}-content`);
+            const arrow = document.getElementById(`${id}-arrow`);
+            content.classList.toggle('open');
+            arrow.classList.toggle('rotate-180');
+        };
+
+        // 로그인 모달 및 기어 클릭 핸들링
+        window.handleGearClick = function() {
+            if (auth.currentUser) {
+                window.openSettings(); // 이미 로그인된 상태면 설정창 오픈
+            } else {
+                document.getElementById('login-modal').classList.remove('hidden'); // 아니면 로그인창 오픈
+            }
+        };
+
+        window.loginAdmin = async function() {
+            const email = document.getElementById('admin-email').value;
+            const pw = document.getElementById('admin-pw').value;
+            const btn = document.getElementById('login-btn');
+            
+            if(!email || !pw) {
+                window.showToast("이메일과 비밀번호를 입력해주세요.", "error");
+                return;
+            }
+
+            try {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+                await signInWithEmailAndPassword(auth, email, pw);
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('admin-pw').value = '';
+                window.showToast("관리자로 로그인되었습니다.", "success");
+                window.openSettings();
+            } catch (error) {
+                console.error("Login error:", error);
+                window.showToast("로그인 실패: 계정 정보를 확인하세요.", "error");
+            } finally {
+                btn.innerHTML = '로그인';
+                btn.disabled = false;
+            }
+        };
+
+        window.logoutAdmin = async function() {
+            await signOut(auth);
+            window.closeSettings();
+            window.showToast("성공적으로 로그아웃 되었습니다.", "success");
+        };
+
+        // 2. 모달창 열기/닫기
+        window.openSettings = function() {
+            if(!window.appState) return;
+            // 깊은 복사로 수정 임시 데이터 생성
+            window.draftState = JSON.parse(JSON.stringify(window.appState));
+            renderSettingsBody();
+            document.getElementById('settings-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeSettings = function() {
+            document.getElementById('settings-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+            window.draftState = null;
+        };
+
+        // 3. Firebase에 설정 저장 (실제 DB에 요청)
+        window.saveSettings = async function() {
+            const btn = document.getElementById('save-btn');
+            
+            try {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>저장 중...';
+                btn.disabled = true;
+                
+                // 🔥 Firebase에 직접 쓰기 요청 (이 부분이 규칙 오류 시 실패함)
+                await setDoc(settingsRef, window.draftState);
+                
+                window.showToast('설정이 성공적으로 데이터베이스에 저장되었습니다.', 'success');
+                window.closeSettings();
+            } catch (error) {
+                console.error("Firestore Save Error:", error);
+                window.showToast('저장 실패: Firebase 보안 규칙(Rules)을 확인하세요.', 'error');
+            } finally {
+                btn.innerHTML = '변경사항 저장';
+                btn.disabled = false;
+            }
+        };
+
+        // 4. 설정 UI 렌더링 로직
+        const generateId = () => 'id_' + Date.now().toString(36) + Math.random().toString(36).substring(2);
+
+        function renderSettingsBody() {
+            const body = document.getElementById('settings-body');
+            
+            let html = `
+                <div class="mb-8 bg-gray-50 p-5 rounded-xl border border-gray-200">
+                    <h4 class="text-sm font-bold text-gray-800 mb-4"><i class="fas fa-border-all mr-1"></i> 레이아웃 설정</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">메인 열 (Column) 개수</label>
+                            <select onchange="window.draftState.columns = parseInt(this.value); window.renderSettingsBody();" class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-100 outline-none">
+                                ${[1,2,3,4,5,6].map(n => `<option value="${n}" ${window.draftState.columns === n ? 'selected' : ''}>${n}열</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">메인 행 (Row) 개수</label>
+                            <select onchange="window.draftState.rows = parseInt(this.value); window.renderSettingsBody();" class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-100 outline-none">
+                                ${[1,2,3,4,5,6].map(n => `<option value="${n}" ${window.draftState.rows === n ? 'selected' : ''}>${n}행</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-sm font-bold text-gray-800"><i class="fas fa-list mr-1"></i> 주메뉴 및 하위 메뉴 관리</h4>
+                        <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full font-semibold">총 ${window.draftState.categories.length}개</span>
+                    </div>
+                    
+                    <div class="space-y-6">
+            `;
+
+            window.draftState.categories.forEach((cat, cIdx) => {
+                const isHidden = cIdx >= (window.draftState.columns * window.draftState.rows);
+                const opacityClass = isHidden ? 'opacity-50 grayscale' : 'border-gray-300';
+                const hiddenBadge = isHidden ? `<span class="absolute -top-3 left-4 bg-gray-500 text-white text-xs px-2 py-0.5 rounded-full shadow-sm">행/열 제한으로 미표시</span>` : '';
+
+                html += `
+                    <div class="border-2 rounded-xl p-5 bg-white relative shadow-sm ${opacityClass} transition-opacity">
+                        ${hiddenBadge}
+                        <button onclick="window.removeDraftCategory('${cat.id}')" class="absolute top-4 right-4 text-red-400 hover:text-red-600 hover:bg-red-50 w-8 h-8 rounded-lg flex items-center justify-center transition-colors" title="주메뉴 삭제">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5 pr-10">
+                            <div class="md:col-span-1">
+                                <label class="text-xs font-semibold text-gray-500 mb-1 block">주메뉴명</label>
+                                <input type="text" value="${cat.title}" onchange="window.updateCat('${cat.id}', 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none">
+                            </div>
+                            <div class="md:col-span-1">
+                                <label class="text-xs font-semibold text-gray-500 mb-1 block">설명</label>
+                                <input type="text" value="${cat.subtitle}" onchange="window.updateCat('${cat.id}', 'subtitle', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none">
+                            </div>
+                            <div class="md:col-span-1">
+                                <label class="text-xs font-semibold text-gray-500 mb-1 block">아이콘 (FontAwesome)</label>
+                                <input type="text" value="${cat.icon}" onchange="window.updateCat('${cat.id}', 'icon', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none" placeholder="예: fa-book">
+                            </div>
+                            <div class="md:col-span-1">
+                                <label class="text-xs font-semibold text-gray-500 mb-1 block">테마 색상</label>
+                                <select onchange="window.updateCat('${cat.id}', 'color', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-100 outline-none">
+                                    ${Object.keys(palette).map(color => `<option value="${color}" ${cat.color === color ? 'selected' : ''}>${color}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <div class="flex justify-between items-center mb-3">
+                                <h5 class="text-xs font-bold text-gray-700"><i class="fas fa-sitemap mr-1"></i> 하위 메뉴</h5>
+                                <button onclick="window.addDraftItem('${cat.id}')" class="text-xs bg-white border px-3 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors shadow-sm font-semibold">
+                                    + 하위 메뉴 추가
+                                </button>
+                            </div>
+                            <div class="space-y-2">
+                                ${cat.items.length > 0 ? cat.items.map((item, iIdx) => `
+                                    <div class="flex flex-col md:flex-row gap-2 items-center bg-white p-2.5 border border-gray-200 rounded-lg shadow-sm">
+                                        <div class="flex flex-col gap-0 mr-1">
+                                            <button onclick="window.moveDraftItemUp('${cat.id}', ${iIdx})" class="text-gray-400 hover:text-blue-500 disabled:opacity-30 disabled:hover:text-gray-400 p-1 leading-none" ${iIdx === 0 ? 'disabled' : ''} title="위로 이동"><i class="fas fa-chevron-up text-xs"></i></button>
+                                            <button onclick="window.moveDraftItemDown('${cat.id}', ${iIdx})" class="text-gray-400 hover:text-blue-500 disabled:opacity-30 disabled:hover:text-gray-400 p-1 leading-none" ${iIdx === cat.items.length - 1 ? 'disabled' : ''} title="아래로 이동"><i class="fas fa-chevron-down text-xs"></i></button>
+                                        </div>
+                                        <div class="flex-1 w-full flex items-center bg-gray-50 border rounded-md px-3 py-1.5 focus-within:ring-2 focus-within:ring-blue-100 focus-within:bg-white">
+                                            <i class="fas fa-heading text-gray-400 text-xs mr-2"></i>
+                                            <input type="text" value="${item.title}" onchange="window.updateItem('${cat.id}', ${iIdx}, 'title', this.value)" placeholder="자료명" class="w-full bg-transparent outline-none text-sm">
+                                        </div>
+                                        <div class="flex-1 w-full flex items-center bg-gray-50 border rounded-md px-3 py-1.5 focus-within:ring-2 focus-within:ring-blue-100 focus-within:bg-white">
+                                            <i class="fas fa-link text-gray-400 text-xs mr-2"></i>
+                                            <input type="text" value="${item.link}" onchange="window.updateItem('${cat.id}', ${iIdx}, 'link', this.value)" placeholder="링크 URL" class="w-full bg-transparent outline-none text-sm">
+                                        </div>
+                                        <button onclick="window.removeDraftItem('${cat.id}', ${iIdx})" class="text-gray-400 hover:text-red-500 w-8 h-8 flex-shrink-0 flex items-center justify-center rounded transition-colors" title="삭제">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                `).join('') : '<p class="text-xs text-gray-400 text-center py-2">등록된 하위 메뉴가 없습니다.</p>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    <button onclick="window.addDraftCategory()" class="w-full py-4 border-2 border-dashed border-gray-300 text-gray-500 bg-gray-50 rounded-xl hover:bg-gray-100 hover:text-gray-800 transition-colors font-bold text-sm">
+                        <i class="fas fa-plus-circle mr-1"></i> 새 주메뉴(카테고리) 추가하기
+                    </button>
+                </div>
+            `;
+
+            body.innerHTML = html;
+        }
+        
+        // 전역 함수로 등록 (onclick 속성 지원을 위함)
+        window.renderSettingsBody = renderSettingsBody;
+
+        window.updateCat = function(id, field, value) {
+            const cat = window.draftState.categories.find(c => c.id === id);
+            if(cat) cat[field] = value;
+            if(field === 'color') renderSettingsBody(); 
+        };
+
+        window.updateItem = function(catId, itemIdx, field, value) {
+            const cat = window.draftState.categories.find(c => c.id === catId);
+            if(cat && cat.items[itemIdx]) cat.items[itemIdx][field] = value;
+        };
+
+        window.addDraftCategory = function() {
+            window.draftState.categories.push({ id: generateId(), title: '새 주메뉴', subtitle: '설명을 입력하세요', icon: 'fa-folder', color: 'blue', items: [] });
+            renderSettingsBody();
+            const modal = document.getElementById('settings-modal');
+            setTimeout(() => modal.scrollTo({ top: modal.scrollHeight, behavior: 'smooth' }), 50);
+        };
+
+        window.removeDraftCategory = function(id) {
+            if(confirm('이 주메뉴와 포함된 모든 하위 메뉴를 삭제하시겠습니까?')) {
+                window.draftState.categories = window.draftState.categories.filter(c => c.id !== id);
+                renderSettingsBody();
+            }
+        };
+
+        window.addDraftItem = function(catId) {
+            const cat = window.draftState.categories.find(c => c.id === catId);
+            if(cat) { cat.items.push({ title: '', link: '#' }); renderSettingsBody(); }
+        };
+
+        window.removeDraftItem = function(catId, itemIdx) {
+            const cat = window.draftState.categories.find(c => c.id === catId);
+            if(cat) { cat.items.splice(itemIdx, 1); renderSettingsBody(); }
+        };
+
+        window.moveDraftItemUp = function(catId, itemIdx) {
+            const cat = window.draftState.categories.find(c => c.id === catId);
+            if (cat && itemIdx > 0) {
+                const temp = cat.items[itemIdx - 1];
+                cat.items[itemIdx - 1] = cat.items[itemIdx];
+                cat.items[itemIdx] = temp;
+                renderSettingsBody();
+            }
+        };
+
+        window.moveDraftItemDown = function(catId, itemIdx) {
+            const cat = window.draftState.categories.find(c => c.id === catId);
+            if (cat && itemIdx < cat.items.length - 1) {
+                const temp = cat.items[itemIdx + 1];
+                cat.items[itemIdx + 1] = cat.items[itemIdx];
+                cat.items[itemIdx] = temp;
+                renderSettingsBody();
+            }
+        };
+
+        let toastTimeout;
+        window.showToast = function(message, type) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            document.getElementById('toast-msg').innerText = message;
+            
+            if(type === 'error') {
+                icon.className = 'fas fa-exclamation-circle text-red-400';
+            } else {
+                icon.className = 'fas fa-check-circle text-green-400';
+            }
+
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
