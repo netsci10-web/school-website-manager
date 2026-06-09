@@ -6,6 +6,10 @@
     <title>학교 업무 도움 데스크 매니저</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- 부드러운 드래그 앤 드롭을 위한 SortableJS 라이브러리 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
@@ -33,19 +37,25 @@
         .slide-content { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.3s ease, opacity 0.3s ease; }
         .slide-content > * { overflow: hidden; }
         .slide-content.open { grid-template-rows: 1fr; opacity: 1; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
         #toast { transition: opacity 0.3s, transform 0.3s; transform: translateY(100%); opacity: 0; pointer-events: none; }
         #toast.show { transform: translateY(0); opacity: 1; }
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* 게시판 UI 전용 스타일 */
+        .board-table-header { border-top: 2px solid #333; border-bottom: 1px solid #ccc; }
+        .board-row { border-bottom: 1px solid #eee; }
+        .board-row:hover { background-color: #f8fafc; }
     </style>
 </head>
 <body class="min-h-screen">
     <!-- JIT 보완 클래스 세이프리스트 -->
-    <div class="hidden lg:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 lg:grid-cols-5 lg:grid-cols-6 md:grid-cols-1 md:grid-cols-2 md:grid-cols-3 md:grid-cols-4"></div>
+    <div class="hidden lg:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 lg:grid-cols-5 lg:grid-cols-6 md:grid-cols-1 md:grid-cols-2 md:grid-cols-3 md:grid-cols-4 text-teal-600 bg-teal-600 hover:bg-teal-700"></div>
 
+    <!-- 배경 장식 -->
     <div class="bg-nature-wrap">
         <div class="bg-mountain-left"><svg viewBox="0 0 400 320" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.7;"><ellipse cx="60" cy="0" rx="200" ry="120" fill="url(#cloudL1)"/><path d="M0 320 L0 140 Q30 80 80 100 Q130 50 180 90 Q220 40 270 80 Q310 60 350 100 Q380 130 400 160 L400 320Z" fill="url(#mountainL1)"/><path d="M0 320 L0 180 Q40 130 100 160 Q150 110 200 140 Q250 100 300 140 L350 320Z" fill="url(#mountainL2)"/><path d="M0 320 L0 220 Q50 180 120 210 Q180 170 250 200 L300 320Z" fill="url(#mountainL3)"/><defs><linearGradient id="cloudL1" x1="0" y1="0" x2="200" y2="120"><stop offset="0%" stop-color="#b8dce8" stop-opacity="0.4"/><stop offset="100%" stop-color="#d4eef5" stop-opacity="0.1"/></linearGradient><linearGradient id="mountainL1" x1="100" y1="40" x2="100" y2="320"><stop offset="0%" stop-color="#8cc5a8" stop-opacity="0.35"/><stop offset="100%" stop-color="#b5dcc5" stop-opacity="0.1"/></linearGradient><linearGradient id="mountainL2" x1="80" y1="100" x2="80" y2="320"><stop offset="0%" stop-color="#a3d4b7" stop-opacity="0.3"/><stop offset="100%" stop-color="#c8e6d2" stop-opacity="0.08"/></linearGradient><linearGradient id="mountainL3" x1="60" y1="170" x2="60" y2="320"><stop offset="0%" stop-color="#bce0cb" stop-opacity="0.25"/><stop offset="100%" stop-color="#ddf0e3" stop-opacity="0.05"/></linearGradient></defs></svg></div>
         <div class="bg-mountain-right"><svg viewBox="0 0 350 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.6;"><ellipse cx="300" cy="0" rx="180" ry="100" fill="url(#cloudR1)"/><path d="M0 160 Q40 80 100 110 Q150 50 200 80 Q250 30 300 70 Q330 50 350 80 L350 300 L0 300Z" fill="url(#mountainR1)"/><path d="M50 300 Q80 140 150 170 Q200 120 260 150 Q310 110 350 140 L350 300Z" fill="url(#mountainR2)"/><path d="M100 300 Q140 200 200 220 Q260 180 320 210 L350 300Z" fill="url(#mountainR3)"/><defs><linearGradient id="cloudR1" x1="200" y1="0" x2="350" y2="100"><stop offset="0%" stop-color="#a8d1e0" stop-opacity="0.3"/><stop offset="100%" stop-color="#c8e4ef" stop-opacity="0.08"/></linearGradient><linearGradient id="mountainR1" x1="200" y1="30" x2="200" y2="300"><stop offset="0%" stop-color="#7fbfdb" stop-opacity="0.3"/><stop offset="100%" stop-color="#b5d8e8" stop-opacity="0.08"/></linearGradient><linearGradient id="mountainR2" x1="200" y1="110" x2="200" y2="300"><stop offset="0%" stop-color="#95cada" stop-opacity="0.25"/><stop offset="100%" stop-color="#c5e2ed" stop-opacity="0.05"/></linearGradient><linearGradient id="mountainR3" x1="220" y1="180" x2="220" y2="300"><stop offset="0%" stop-color="#a8d5e2" stop-opacity="0.2"/><stop offset="100%" stop-color="#d5ebf2" stop-opacity="0.03"/></linearGradient></defs></svg></div>
@@ -78,7 +88,10 @@
 
     <!-- 헤더 -->
     <header class="relative pt-12 pb-8" style="z-index:2;">
-        <div class="absolute top-6 right-6 z-20">
+        <div class="absolute top-6 right-6 z-20 flex gap-2 items-center">
+            <button id="master-key-btn" onclick="window.handleMasterKeyClick()" class="hidden bg-white/90 hover:bg-white p-3 rounded-full shadow-sm text-gray-500 hover:text-amber-500 transition-colors" title="마스터 암호 입력">
+                <i id="master-key-icon" class="fas fa-key text-xl"></i>
+            </button>
             <button onclick="window.handleGearClick()" class="bg-white/90 hover:bg-white p-3 rounded-full shadow-sm text-gray-500 hover:text-blue-600 transition-colors" title="설정 메뉴 열기">
                 <i class="fas fa-cog text-xl"></i>
             </button>
@@ -95,6 +108,8 @@
             <div class="loader mb-4"></div>
             <p class="text-gray-500 font-medium">데이터를 불러오는 중입니다...</p>
         </div>
+        
+        <!-- 기존 메인 메뉴 그리드 -->
         <div id="main-grid" class="grid gap-6 hidden"></div>
     </main>
 
@@ -142,6 +157,25 @@
         </div>
     </div>
 
+    <!-- 게시판 (Board) 풀스크린 모달 -->
+    <div id="board-modal" class="fixed inset-0 bg-gray-50 z-[45] hidden flex-col h-full w-full overflow-hidden">
+        <!-- 게시판 헤더 -->
+        <header class="bg-white border-b border-gray-200 px-4 md:px-8 py-4 flex items-center justify-between shrink-0 shadow-sm">
+            <div class="flex items-center gap-3">
+                <button onclick="window.closeBoardApp()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors"><i class="fas fa-arrow-left text-lg"></i></button>
+                <div>
+                    <h2 id="board-modal-title" class="text-xl font-bold text-gray-800">게시판</h2>
+                    <p id="board-modal-desc" class="text-xs text-gray-500 mt-0.5">게시판 설명</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- 게시판 본문 (리스트 / 읽기 / 쓰기 렌더링 영역) -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+            <div class="max-w-6xl mx-auto" id="board-content-area"></div>
+        </div>
+    </div>
+
     <!-- 커스텀 삭제 확인 모달 -->
     <div id="confirm-modal" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all">
@@ -158,7 +192,7 @@
     </div>
 
     <!-- 통합 암호 모달 -->
-    <div id="pw-modal" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="pw-modal" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm z-[55] hidden flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm relative">
             <button onclick="window.closePasswordModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700"><i class="fas fa-times"></i></button>
             <div class="text-center mb-6">
@@ -172,7 +206,7 @@
     </div>
 
     <!-- 토스트 알림 -->
-    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-3">
+    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg z-[70] flex items-center gap-3">
         <i class="fas fa-check-circle text-green-400" id="toast-icon"></i>
         <span id="toast-msg" class="text-sm font-medium truncate max-w-xs">알림</span>
     </div>
@@ -217,9 +251,9 @@
         ];
 
         const defaultState = {
-            pageTitle: '학교 업무 도움 데스크 매니저', copyright: '© Netsci 모든 권리 보유', contactEmail: '', columns: 3, rows: 2,
+            pageTitle: '학교 업무 도움 데스크 매니저', copyright: '© Netsci 모든 권리 보유', contactEmail: '', masterPassword: '', columns: 3, rows: 2,
             categories: [{ 
-                id: 'cat_1', title: '유치원', subtitle: '유치원 관련 업무자료', icon: 'fa-child', color: 'blue', password: '', link: '',
+                id: 'cat_1', type: 'menu', title: '유치원', subtitle: '유치원 관련 업무자료', icon: 'fa-child', color: 'blue', password: '', link: '',
                 groups: [{ id: 'grp_1', title: '0. 일러두기 및 목록', icon: 'fa-exclamation', color: 'red', password: '', link: '', items: [{ title: '0. 일러두기', link: '#', password: '' }] }] 
             }]
         };
@@ -229,8 +263,11 @@
             if (!data.pageTitle) data.pageTitle = '학교 업무 도움 데스크 매니저';
             if (!data.copyright) data.copyright = '© Netsci 모든 권리 보유';
             if (data.contactEmail === undefined) data.contactEmail = '';
+            if (data.masterPassword === undefined) data.masterPassword = '';
 
             data.categories.forEach(cat => {
+                if(cat.type === undefined) cat.type = 'menu'; // 기존 데이터는 기본 메뉴로
+                if(cat.posts === undefined) cat.posts = []; // 게시판 전용 글 저장 배열
                 if(cat.password === undefined) cat.password = '';
                 if(cat.link === undefined) cat.link = '';
                 if (!cat.groups && cat.items) {
@@ -247,7 +284,6 @@
             return data;
         }
 
-        // URL 자동 포맷팅 (http:// 생략 시 붙여줌)
         const formatUrl = (url) => {
             if (!url || url.trim() === '' || url.trim() === '#') return '#';
             let formatted = url.trim();
@@ -259,6 +295,18 @@
 
         window.appState = null; window.draftState = null;
         window.unlockedEntities = new Set(); window.currentPendingTarget = null;
+        window.isMasterUnlocked = false; 
+        window.isQuickReorderMode = false; // 빠른 이동 순서 변경 모드 상태 변수
+        window.collapsedSettings = new Set(); // 접힌 설정 박스 상태
+        
+        // 게시판 구동용 상태 (현재 어떤 화면을 보고 있는지 기억)
+        window.boardState = {
+            currentCatId: null,
+            currentPage: 1,
+            searchQuery: '',
+            currentPostId: null, // 현재 열려있는 게시물 ID (null이면 리스트, 'write'면 글쓰기 화면)
+            editingPostId: null // 현재 수정 중인 게시물 ID 추가
+        };
         
         function initApp() {
             const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -273,7 +321,21 @@
                     }
                     document.getElementById('loading-indicator').classList.add('hidden');
                     document.getElementById('main-grid').classList.remove('hidden');
-                    renderMain();
+                    
+                    // 만약 게시판을 보고 있는 도중이라면 게시판 내용도 업데이트하되, 현재 보고 있는 화면 유지
+                    if (document.getElementById('board-modal').classList.contains('hidden') === false && window.boardState.currentCatId) {
+                        if (window.boardState.currentPostId === 'write') {
+                            // 글 작성 중일 때는 렌더링 덮어쓰기 방지 (작성 중인 내용 유지)
+                        } else if (window.boardState.currentPostId) {
+                            // 상세 글을 보고 있었다면 글 뷰 업데이트 (조회수 중복 증가 방지)
+                            window.viewBoardPost(window.boardState.currentPostId, true);
+                        } else {
+                            // 목록 화면이었다면 리스트 렌더링
+                            window.renderBoardList(window.boardState.currentPage, window.boardState.searchQuery, true);
+                        }
+                    }
+                    
+                    window.renderMain();
                 }, (err) => {
                     document.getElementById('loading-indicator').innerHTML = `<div class="text-red-500 mb-4"><i class="fas fa-exclamation-triangle text-5xl"></i></div><p class="text-gray-800 font-bold text-lg mb-2">데이터베이스 읽기 권한 없음</p><p class="text-gray-500 text-sm">Firestore 규칙(Rules) 설정을 확인해주세요.</p>`;
                 });
@@ -281,13 +343,28 @@
         }
         initApp();
 
-        function renderMain() {
+        window.renderMain = function() {
             if(!window.appState) return;
             document.getElementById('main-title').innerText = window.appState.pageTitle;
             document.title = window.appState.pageTitle;
             let fContent = window.appState.copyright;
             if(window.appState.contactEmail) fContent += ` | 문의: <a href="mailto:${window.appState.contactEmail}" class="hover:text-blue-500 font-bold">${window.appState.contactEmail}</a>`;
             document.getElementById('main-footer-text').innerHTML = fContent;
+
+            const masterBtn = document.getElementById('master-key-btn');
+            const masterIcon = document.getElementById('master-key-icon');
+            if (window.appState.masterPassword && window.appState.masterPassword.trim() !== '') {
+                masterBtn.classList.remove('hidden');
+                if (window.isMasterUnlocked) {
+                    masterIcon.className = 'fas fa-unlock text-green-500 text-xl';
+                    masterBtn.title = '마스터 권한 해제하기 (클릭 시 다시 잠금)';
+                } else {
+                    masterIcon.className = 'fas fa-key text-xl';
+                    masterBtn.title = '마스터 암호 입력 (모든 하위 암호 패스)';
+                }
+            } else {
+                masterBtn.classList.add('hidden');
+            }
 
             const grid = document.getElementById('main-grid');
             grid.className = `grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-${window.appState.columns}`;
@@ -296,10 +373,57 @@
             grid.innerHTML = window.appState.categories.slice(0, limit).map((cat, index) => {
                 const colors = palette[cat.color] || palette.blue;
                 const isCatLocked = cat.password && cat.password.trim() !== '';
-                const catLockIcon = isCatLocked ? `<i class="fas fa-lock text-gray-300 ml-2 text-sm" title="암호 보호됨"></i>` : '';
+                const catLockIcon = isCatLocked ? (window.isMasterUnlocked || window.unlockedEntities.has(cat.id) ? `<i class="fas fa-lock-open text-green-400 ml-2 text-sm" title="잠금 해제됨"></i>` : `<i class="fas fa-lock text-gray-300 ml-2 text-sm" title="암호 보호됨"></i>`) : '';
+                
+                // 타입에 따른 렌더링 분기
+                if (cat.type === 'board') {
+                    let boardPostsHtml = '';
+                    if (cat.posts && cat.posts.length > 0) {
+                        const latestPosts = [...cat.posts].sort((a, b) => (b.timestamp || new Date(b.date).getTime()) - (a.timestamp || new Date(a.date).getTime())).slice(0, 5);
+                        boardPostsHtml = `
+                            <div class="border-t border-gray-100 bg-gray-50/50 rounded-b-xl overflow-hidden flex-1 flex flex-col justify-end">
+                                <ul class="divide-y divide-gray-100">
+                                    ${latestPosts.map(post => `
+                                        <li class="px-4 py-2.5 hover:bg-blue-50 cursor-pointer flex justify-between items-center transition-colors group/post" onclick="window.openBoardAppAndPost('${cat.id}', '${post.id}')">
+                                            <div class="flex items-center min-w-0 flex-1">
+                                                <i class="fas fa-angle-right text-gray-300 mr-2 text-[10px] group-hover/post:text-blue-400 transition-colors flex-shrink-0"></i>
+                                                <span class="truncate text-xs md:text-sm text-gray-600 group-hover/post:text-blue-700 transition-colors font-medium">${post.title}</span>
+                                                ${post.isNew ? '<span class="inline-flex items-center justify-center w-3 h-3 ml-1.5 bg-teal-500 text-white text-[8px] rounded-full font-bold flex-shrink-0">N</span>' : ''}
+                                            </div>
+                                            <span class="text-[10px] text-gray-400 ml-3 flex-shrink-0 hidden md:block">${post.author}</span>
+                                            <span class="text-[10px] text-gray-400 ml-3 flex-shrink-0">${post.date.substring(5)}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        `;
+                    } else {
+                        boardPostsHtml = `
+                            <div class="border-t border-gray-100 bg-gray-50/50 rounded-b-xl overflow-hidden px-4 py-4 text-center text-xs text-gray-400">
+                                등록된 게시물이 없습니다.
+                            </div>
+                        `;
+                    }
+
+                    return `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200 card-entrance flex flex-col" style="animation-delay: ${index * 60}ms;">
+                        <button onclick="window.handleCategoryClick(event, '${cat.id}')" class="w-full p-4 md:p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200 rounded-t-xl z-10">
+                            <div class="flex items-center min-w-0 flex-1 pr-2">
+                                <div class="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 ${colors.bg} rounded-full flex items-center justify-center mr-3 md:mr-4"><i class="fas ${cat.icon} ${colors.text} text-lg md:text-xl"></i></div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-base md:text-lg font-bold text-gray-800 flex items-center truncate w-full">${cat.title} <span class="ml-3 px-3 py-1 bg-blue-500 text-white rounded-lg text-[11px] md:text-xs font-bold shadow-sm transition-colors flex-shrink-0 flex items-center"><i class="fas fa-clipboard-list mr-1"></i>게시판 가기</span> ${catLockIcon}</h3>
+                                    <p class="text-xs md:text-sm text-gray-500 mt-1 truncate w-full">${cat.subtitle}</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400 transition-transform duration-300 flex-shrink-0"></i>
+                        </button>
+                        ${boardPostsHtml}
+                    </div>`;
+                }
+
+                // 기존 'menu' 타입
                 const hasLink = cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#';
                 const hasGroups = cat.groups && cat.groups.length > 0;
-                
                 const catTag = hasLink ? 'a' : 'button';
                 const catHref = hasLink ? `href="${formatUrl(cat.link)}" target="_blank"` : '';
                 const catClick = `onclick="return window.handleCategoryClick(event, '${cat.id}')"`;
@@ -324,7 +448,7 @@
                                 const gColors = palette[group.color] || palette.gray;
                                 const groupId = `${cat.id}-grp-${gIdx}`;
                                 const isGroupLocked = group.password && group.password.trim() !== '';
-                                const groupLockIcon = isGroupLocked ? `<i class="fas fa-lock text-gray-300 ml-2 text-xs" title="암호 보호됨"></i>` : '';
+                                const groupLockIcon = isGroupLocked ? (window.isMasterUnlocked || window.unlockedEntities.has(groupId) ? `<i class="fas fa-lock-open text-green-400 ml-2 text-xs" title="잠금 해제됨"></i>` : `<i class="fas fa-lock text-gray-300 ml-2 text-xs" title="암호 보호됨"></i>`) : '';
                                 const gHasLink = group.link && group.link.trim() !== '' && group.link.trim() !== '#';
                                 const gHasItems = group.items && group.items.length > 0;
                                 
@@ -345,12 +469,13 @@
                                     ${!gHasLink && gHasItems ? `
                                     <div id="${groupId}-content" class="slide-content bg-white border-t border-gray-50"><div class="p-2 space-y-1">
                                         ${group.items.map((item, iIdx) => {
+                                            const itemId = `${cat.id}-grp-${gIdx}-item-${iIdx}`;
                                             const isItemLocked = item.password && item.password.trim() !== '';
-                                            const itemLockIcon = isItemLocked ? `<i class="fas fa-lock text-gray-300 ml-1.5 text-[10px]" title="암호 보호됨"></i>` : '';
+                                            const itemLockIcon = isItemLocked ? (window.isMasterUnlocked || window.unlockedEntities.has(itemId) ? `<i class="fas fa-lock-open text-green-400 ml-1.5 text-[10px]" title="잠금 해제됨"></i>` : `<i class="fas fa-lock text-gray-300 ml-1.5 text-[10px]" title="암호 보호됨"></i>`) : '';
                                             return `
                                             <a href="${formatUrl(item.link)}" target="_blank" rel="noopener noreferrer" onclick="return window.handleItemClick(event, '${cat.id}', ${gIdx}, ${iIdx})" class="block p-2 mx-1 bg-white border border-gray-100 rounded hover:bg-slate-50 hover:border-slate-300 transition-colors text-xs md:text-sm text-gray-600 flex items-center group/link">
                                                 <i class="fas fa-file-alt mr-2 text-gray-400 group-hover/link:text-blue-500 transition-colors flex-shrink-0"></i>
-                                                <span class="font-medium flex items-center truncate">${item.title} ${itemLockIcon}</span>
+                                                <span class="flex-1 min-w-0 truncate font-medium flex items-center">${item.title} ${itemLockIcon}</span>
                                                 <i class="fas fa-external-link-alt ml-auto pl-2 text-[10px] md:text-xs text-gray-300 opacity-0 group-hover/link:opacity-100 transition-opacity flex-shrink-0"></i>
                                             </a>
                                         `}).join('')}
@@ -363,18 +488,26 @@
             }).join('') || `<div class="col-span-full py-20 text-center text-gray-500 bg-white rounded-xl border border-gray-100"><i class="fas fa-exclamation-circle text-3xl mb-3 text-gray-300"></i><p>설정된 메뉴가 없습니다.</p></div>`;
         }
 
+        /* --------------------------------------------------------
+           클릭 및 액션 제어 (게시판 포함)
+           -------------------------------------------------------- */
         window.handleCategoryClick = function(event, catId) {
             const cat = window.appState.categories.find(c => c.id === catId);
             if (!cat) return;
             
-            if (cat.password && cat.password.trim() !== '' && !window.unlockedEntities.has(catId)) {
+            if (!window.isMasterUnlocked && cat.password && cat.password.trim() !== '' && !window.unlockedEntities.has(catId)) {
                 if(event) event.preventDefault();
                 window.currentPendingTarget = { type: 'cat', catId }; 
                 window.openPasswordModal();
                 return false;
             } else {
-                if (cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#') return true; 
-                else if (cat.groups && cat.groups.length > 0) {
+                if (cat.type === 'board') {
+                    if(event) event.preventDefault();
+                    window.openBoardApp(cat.id);
+                    return false;
+                } else if (cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#') {
+                    return true; 
+                } else if (cat.groups && cat.groups.length > 0) {
                     if(event) event.preventDefault();
                     window.toggleSection(cat.id);
                     return false;
@@ -384,12 +517,18 @@
             }
         };
 
+        function executeCatAction(cat) {
+            if (cat.type === 'board') window.openBoardApp(cat.id);
+            else if (cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#') window.open(formatUrl(cat.link), '_blank');
+            else if (cat.groups && cat.groups.length > 0) window.toggleSection(cat.id);
+        }
+
         window.handleGroupClick = function(event, catId, gIdx) {
             const cat = window.appState.categories.find(c => c.id === catId);
             const group = cat.groups[gIdx];
             const groupId = `${catId}-grp-${gIdx}`;
             
-            if (group.password && group.password.trim() !== '' && !window.unlockedEntities.has(groupId)) {
+            if (!window.isMasterUnlocked && group.password && group.password.trim() !== '' && !window.unlockedEntities.has(groupId)) {
                 if(event) event.preventDefault();
                 window.currentPendingTarget = { type: 'group', catId, gIdx }; 
                 window.openPasswordModal();
@@ -411,7 +550,7 @@
             const item = cat.groups[gIdx].items[iIdx];
             const itemId = `${catId}-grp-${gIdx}-item-${iIdx}`;
             
-            if (item.password && item.password.trim() !== '' && !window.unlockedEntities.has(itemId)) {
+            if (!window.isMasterUnlocked && item.password && item.password.trim() !== '' && !window.unlockedEntities.has(itemId)) {
                 event.preventDefault();
                 window.currentPendingTarget = { type: 'item', catId, gIdx, iIdx }; 
                 window.openPasswordModal();
@@ -420,22 +559,59 @@
             return true;
         };
 
-        function executeCatAction(cat) {
-            if (cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#') window.open(formatUrl(cat.link), '_blank');
-            else if (cat.groups && cat.groups.length > 0) window.toggleSection(cat.id);
-        }
         function executeGroupAction(group, groupId) {
             if (group.link && group.link.trim() !== '' && group.link.trim() !== '#') window.open(formatUrl(group.link), '_blank');
             else if (group.items && group.items.length > 0) window.toggleSection(groupId);
         }
 
-        window.openPasswordModal = () => { document.getElementById('pw-input').value = ''; document.getElementById('pw-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('pw-input').focus(), 100); };
+        // 최신 게시물 클릭 시 게시판 & 해당 글 바로 열기 기능
+        window.openBoardAppAndPost = function(catId, postId) {
+            const cat = window.appState.categories.find(c => c.id === catId);
+            if (!cat) return;
+            
+            // 게시판 자체에 암호가 있는지 확인
+            if (!window.isMasterUnlocked && cat.password && cat.password.trim() !== '' && !window.unlockedEntities.has(catId)) {
+                window.currentPendingTarget = { type: 'board_post', catId, postId }; 
+                window.openPasswordModal();
+                return;
+            }
+
+            window.openBoardApp(catId);
+            // 모달 렌더링 후 상세 페이지가 열리도록 약간의 시간차를 둠
+            setTimeout(() => window.viewBoardPost(postId), 50);
+        };
+
+        /* --------------------------------------------------------
+           암호 확인 로직
+           -------------------------------------------------------- */
+        window.pwFailedAttempts = 0;
+        window.openPasswordModal = () => { window.pwFailedAttempts = 0; document.getElementById('pw-input').value = ''; document.getElementById('pw-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('pw-input').focus(), 100); };
         window.closePasswordModal = () => { document.getElementById('pw-modal').classList.add('hidden'); window.currentPendingTarget = null; };
+        
+        window.handlePasswordFailure = () => {
+            window.pwFailedAttempts++;
+            if (window.pwFailedAttempts >= 3) {
+                window.closePasswordModal();
+                window.showToast('암호 입력을 3회 실패하여 화면을 초기화합니다.', 'error');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                window.showToast(`암호가 일치하지 않습니다. (실패: ${window.pwFailedAttempts}/3)`, 'error');
+                document.getElementById('pw-input').value = '';
+                document.getElementById('pw-input').focus();
+            }
+        };
         
         window.submitPassword = function() {
             const input = document.getElementById('pw-input').value;
             const target = window.currentPendingTarget;
             if (!target) return;
+
+            if (target.type === 'master') {
+                if (input === window.appState.masterPassword) {
+                    window.isMasterUnlocked = true; window.closePasswordModal(); window.showToast('마스터 권한 활성화.', 'success'); window.renderMain();
+                } else window.handlePasswordFailure();
+                return;
+            }
 
             const cat = window.appState.categories.find(c => c.id === target.catId);
             let expectedPw = '', unlockId = '', successAction = () => {};
@@ -443,11 +619,11 @@
             if (target.type === 'cat') { expectedPw = cat.password; unlockId = cat.id; successAction = () => executeCatAction(cat); } 
             else if (target.type === 'group') { const group = cat.groups[target.gIdx]; expectedPw = group.password; unlockId = `${cat.id}-grp-${target.gIdx}`; successAction = () => executeGroupAction(group, unlockId); } 
             else if (target.type === 'item') { const item = cat.groups[target.gIdx].items[target.iIdx]; expectedPw = item.password; unlockId = `${cat.id}-grp-${target.gIdx}-item-${target.iIdx}`; successAction = () => window.open(formatUrl(item.link), '_blank'); }
+            else if (target.type === 'board_post') { expectedPw = cat.password; unlockId = cat.id; successAction = () => { window.openBoardApp(target.catId); setTimeout(() => window.viewBoardPost(target.postId), 50); }; }
 
             if (expectedPw === input) {
-                window.unlockedEntities.add(unlockId); window.closePasswordModal();
-                window.showToast('암호가 확인되었습니다.', 'success'); successAction();
-            } else window.showToast('암호가 일치하지 않습니다.', 'error');
+                window.unlockedEntities.add(unlockId); window.closePasswordModal(); window.showToast('확인되었습니다.', 'success'); successAction();
+            } else window.handlePasswordFailure();
         };
 
         window.toggleSection = function(id) {
@@ -456,22 +632,289 @@
             if (arrow) arrow.classList.toggle('rotate-180');
         };
 
-        // 삭제 전용 커스텀 모달
-        window.pendingConfirmAction = null;
-        window.openConfirm = (title, message, action) => {
-            document.getElementById('confirm-title').innerText = title;
-            document.getElementById('confirm-message').innerText = message;
-            window.pendingConfirmAction = action;
-            document.getElementById('confirm-modal').classList.remove('hidden');
+        /* --------------------------------------------------------
+           게시판 (Board) 어플리케이션 영역
+           -------------------------------------------------------- */
+        window.openBoardApp = function(catId) {
+            const cat = window.appState.categories.find(c => c.id === catId);
+            if (!cat || cat.type !== 'board') return;
+            
+            window.boardState.currentCatId = catId;
+            window.boardState.currentPage = 1;
+            window.boardState.searchQuery = '';
+            window.boardState.currentPostId = null;
+            
+            document.getElementById('board-modal-title').innerText = cat.title;
+            document.getElementById('board-modal-desc').innerText = cat.subtitle || '게시판입니다.';
+            
+            document.getElementById('board-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // 바탕 스크롤 방지
+            
+            window.renderBoardList(1, '');
         };
-        window.closeConfirm = () => {
-            document.getElementById('confirm-modal').classList.add('hidden');
-            window.pendingConfirmAction = null;
+
+        window.closeBoardApp = function() {
+            document.getElementById('board-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+            window.boardState.currentCatId = null;
+            window.boardState.currentPostId = null;
         };
-        document.getElementById('confirm-ok-btn').addEventListener('click', () => {
-            if(window.pendingConfirmAction) window.pendingConfirmAction();
-            window.closeConfirm();
-        });
+
+        window.renderBoardList = function(page = 1, searchQuery = '', skipFocus = false) {
+            window.boardState.currentPostId = null; // 화면이 리스트로 바뀌었음을 저장
+            const cat = window.appState.categories.find(c => c.id === window.boardState.currentCatId);
+            if (!cat) return;
+            
+            window.boardState.currentPage = page;
+            window.boardState.searchQuery = searchQuery;
+
+            let posts = cat.posts || [];
+            posts = [...posts].sort((a, b) => (b.timestamp || new Date(b.date).getTime()) - (a.timestamp || new Date(a.date).getTime())); // 최신글이 위로
+
+            if (searchQuery) {
+                const kw = searchQuery.toLowerCase();
+                posts = posts.filter(p => p.title.toLowerCase().includes(kw) || p.author.toLowerCase().includes(kw));
+            }
+
+            const itemsPerPage = 10;
+            const totalItems = posts.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+            
+            if (window.boardState.currentPage > totalPages) window.boardState.currentPage = totalPages;
+            if (window.boardState.currentPage < 1) window.boardState.currentPage = 1;
+
+            const startIdx = (window.boardState.currentPage - 1) * itemsPerPage;
+            const paginatedPosts = posts.slice(startIdx, startIdx + itemsPerPage);
+
+            // 관리자 권한 확인 (글쓰기 버튼 표시 여부)
+            const isAdmin = auth.currentUser && !auth.currentUser.isAnonymous;
+            
+            const area = document.getElementById('board-content-area');
+            
+            let html = `
+                <!-- 상단 헤더 및 검색 -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4 px-2">
+                    <div class="text-sm text-gray-600">전체 <strong class="text-teal-600">${totalItems}</strong>건 (${window.boardState.currentPage} / ${totalPages})</div>
+                    <div class="flex items-center gap-2 w-full md:w-auto">
+                        <select id="board-search-type" class="border border-gray-300 rounded px-2 py-1.5 text-sm bg-white outline-none"><option value="all">제목+부서</option></select>
+                        <div class="relative flex-1 md:w-64">
+                            <input type="text" id="board-search-input" value="${searchQuery}" placeholder="검색어를 입력하세요." class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm outline-none focus:border-teal-500" onkeyup="if(event.key === 'Enter') window.renderBoardList(1, this.value)">
+                            <button onclick="window.renderBoardList(1, document.getElementById('board-search-input').value)" class="absolute right-2 top-1.5 text-gray-400 hover:text-teal-600"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 테이블 -->
+                <div class="bg-white border-t-2 border-gray-800 border-b border-gray-200">
+                    <!-- 헤더 -->
+                    <div class="hidden md:grid grid-cols-12 gap-2 p-3 bg-gray-50 text-sm font-bold text-center border-b border-gray-200">
+                        <div class="col-span-1">순번</div>
+                        <div class="col-span-7">제목</div>
+                        <div class="col-span-2">부서명</div>
+                        <div class="col-span-1">등록일시</div>
+                        <div class="col-span-1">조회수</div>
+                    </div>
+                    <!-- 리스트 -->
+                    <div class="divide-y divide-gray-100">
+                        ${paginatedPosts.length > 0 ? paginatedPosts.map((post, idx) => {
+                            const postNum = totalItems - startIdx - idx;
+                            return `
+                            <div class="flex flex-col md:grid md:grid-cols-12 gap-2 p-3 hover:bg-gray-50 transition-colors text-sm items-center cursor-pointer group/board" onclick="window.viewBoardPost('${post.id}')">
+                                <div class="hidden md:block col-span-1 text-center text-gray-500">${postNum}</div>
+                                <div class="w-full md:col-span-7 text-left font-medium text-gray-800 truncate px-2 group-hover/board:text-teal-700 transition-colors">
+                                    ${post.title} 
+                                    ${post.isNew ? '<span class="inline-flex items-center justify-center w-4 h-4 ml-1 bg-teal-500 text-white text-[10px] rounded-full font-bold">N</span>' : ''}
+                                </div>
+                                <div class="w-full md:col-span-4 flex justify-between md:contents text-xs md:text-sm text-gray-500">
+                                    <div class="md:col-span-2 md:text-center truncate px-2 text-gray-600"><span class="md:hidden font-bold mr-1">부서:</span>${post.author}</div>
+                                    <div class="md:col-span-1 md:text-center whitespace-nowrap">${post.date}</div>
+                                    <div class="md:col-span-1 md:text-center"><span class="md:hidden font-bold mr-1">조회:</span>${post.views || 0}</div>
+                                </div>
+                            </div>
+                            `;
+                        }).join('') : `<div class="p-10 text-center text-gray-500">등록된 게시글이 없습니다.</div>`}
+                    </div>
+                </div>
+
+                <!-- 하단 액션 및 페이징 -->
+                <div class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4 px-2">
+                    <div class="w-full md:w-auto invisible md:visible flex-1"></div> <!-- 공간 맞춤용 -->
+                    
+                    <!-- 페이징 -->
+                    <div class="flex gap-1">
+                        <button onclick="window.renderBoardList(1, '${searchQuery}')" class="w-8 h-8 flex items-center justify-center border rounded bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-30" ${window.boardState.currentPage === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left text-xs"></i></button>
+                        <button onclick="window.renderBoardList(${window.boardState.currentPage - 1}, '${searchQuery}')" class="w-8 h-8 flex items-center justify-center border rounded bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-30" ${window.boardState.currentPage === 1 ? 'disabled' : ''}><i class="fas fa-angle-left text-xs"></i></button>
+                        
+                        <div class="flex gap-1 px-2">
+                            ${Array.from({length: Math.min(5, totalPages)}, (_, i) => {
+                                let pageNum = window.boardState.currentPage > 3 ? window.boardState.currentPage - 2 + i : i + 1;
+                                if (pageNum > totalPages) return '';
+                                const isActive = pageNum === window.boardState.currentPage;
+                                return `<button onclick="window.renderBoardList(${pageNum}, '${searchQuery}')" class="w-8 h-8 flex items-center justify-center border rounded ${isActive ? 'bg-white border-teal-500 text-teal-600 font-bold' : 'bg-white text-gray-600 hover:bg-gray-50'}">${pageNum}</button>`;
+                            }).join('')}
+                        </div>
+
+                        <button onclick="window.renderBoardList(${window.boardState.currentPage + 1}, '${searchQuery}')" class="w-8 h-8 flex items-center justify-center border rounded bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-30" ${window.boardState.currentPage === totalPages ? 'disabled' : ''}><i class="fas fa-angle-right text-xs"></i></button>
+                        <button onclick="window.renderBoardList(${totalPages}, '${searchQuery}')" class="w-8 h-8 flex items-center justify-center border rounded bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-30" ${window.boardState.currentPage === totalPages ? 'disabled' : ''}><i class="fas fa-angle-double-right text-xs"></i></button>
+                    </div>
+
+                    <div class="w-full md:w-auto flex-1 flex justify-end">
+                        ${isAdmin ? `<button onclick="window.openBoardWrite()" class="px-5 py-2 bg-teal-600 text-white font-bold rounded shadow hover:bg-teal-700 transition-colors w-full md:w-auto">글쓰기</button>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            area.innerHTML = html;
+        };
+
+        // isSnapshotUpdate가 true일 경우 서버 갱신으로 인한 리렌더링이므로 조회수를 올리지 않음
+        window.viewBoardPost = function(postId, isSnapshotUpdate = false) {
+            const cat = window.appState.categories.find(c => c.id === window.boardState.currentCatId);
+            const post = cat.posts.find(p => p.id === postId);
+            
+            if (!post) {
+                // 게시물이 삭제되었을 경우 목록으로 이동
+                window.renderBoardList(window.boardState.currentPage, window.boardState.searchQuery);
+                return;
+            }
+
+            window.boardState.currentPostId = postId; // 현재 열린 게시물 ID 기록
+
+            if (!isSnapshotUpdate) {
+                post.views = (post.views || 0) + 1;
+                
+                // 관리자일 경우 조회수를 서버에 업데이트 (일반 사용자는 조회수 업데이트 시 권한에러 나므로 로컬만 반영)
+                if (auth.currentUser && !auth.currentUser.isAnonymous) {
+                    setDoc(settingsRef, window.appState).catch(e => console.warn("조회수 업데이트 생략"));
+                }
+            }
+
+            const isAdmin = auth.currentUser && !auth.currentUser.isAnonymous;
+            const area = document.getElementById('board-content-area');
+            
+            area.innerHTML = `
+                <div class="bg-white border-t-2 border-gray-800">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">${post.title}</h3>
+                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                            <div><i class="fas fa-sitemap mr-1"></i> ${post.author}</div>
+                            <div><i class="far fa-clock mr-1"></i> ${post.date}</div>
+                            <div><i class="far fa-eye mr-1"></i> ${post.views}</div>
+                        </div>
+                    </div>
+                    <div class="p-6 min-h-[300px] text-gray-800 whitespace-pre-wrap leading-relaxed">${post.content}</div>
+                </div>
+                <div class="mt-6 flex justify-between px-2">
+                    <button onclick="window.renderBoardList(window.boardState.currentPage, window.boardState.searchQuery)" class="px-5 py-2 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 font-bold">목록</button>
+                    ${isAdmin ? `
+                    <div class="flex gap-2">
+                        <button onclick="window.openBoardWrite('${postId}')" class="px-5 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded hover:bg-blue-500 hover:text-white transition-colors font-bold">수정</button>
+                        <button onclick="window.deleteBoardPost('${postId}')" class="px-5 py-2 bg-red-50 text-red-500 border border-red-200 rounded hover:bg-red-500 hover:text-white transition-colors font-bold">삭제</button>
+                    </div>` : ''}
+                </div>
+            `;
+        };
+
+        window.openBoardWrite = function(editPostId = null) {
+            window.boardState.currentPostId = 'write'; // 글 작성 상태 기록
+            window.boardState.editingPostId = editPostId; // 수정 상태 기록
+            
+            let post = { title: '', author: '', content: '' };
+            if (editPostId) {
+                const cat = window.appState.categories.find(c => c.id === window.boardState.currentCatId);
+                post = cat.posts.find(p => p.id === editPostId) || post;
+            }
+
+            const area = document.getElementById('board-content-area');
+            const today = new Date().toISOString().slice(0, 10);
+            
+            // 입력창 이스케이프 (따옴표 깨짐 방지)
+            const safeContent = post.content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const safeTitle = post.title.replace(/"/g, '&quot;');
+            const safeAuthor = post.author.replace(/"/g, '&quot;');
+
+            area.innerHTML = `
+                <div class="bg-white border-t-2 border-teal-600 p-6">
+                    <h3 class="text-lg font-bold mb-4">${editPostId ? '게시글 수정' : '게시글 작성'}</h3>
+                    <div class="space-y-4">
+                        <div><label class="block text-sm font-bold text-gray-700 mb-1">제목</label><input type="text" id="write-title" value="${safeTitle}" class="w-full border rounded p-2 outline-none focus:border-teal-500"></div>
+                        <div><label class="block text-sm font-bold text-gray-700 mb-1">부서명 (작성자)</label><input type="text" id="write-author" value="${safeAuthor}" class="w-full md:w-1/2 border rounded p-2 outline-none focus:border-teal-500"></div>
+                        <div><label class="block text-sm font-bold text-gray-700 mb-1">내용</label><textarea id="write-content" rows="10" class="w-full border rounded p-2 outline-none focus:border-teal-500">${safeContent}</textarea></div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end gap-2 px-2">
+                    <button onclick="${editPostId ? `window.viewBoardPost('${editPostId}', true)` : `window.renderBoardList(1, '')`}" class="px-5 py-2 bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 font-bold">취소</button>
+                    <button onclick="window.saveBoardPost()" id="save-post-btn" class="px-5 py-2 bg-teal-600 text-white font-bold rounded shadow hover:bg-teal-700 transition-colors">${editPostId ? '수정하기' : '등록하기'}</button>
+                </div>
+            `;
+        };
+
+        window.saveBoardPost = async function() {
+            const title = document.getElementById('write-title').value.trim();
+            const author = document.getElementById('write-author').value.trim();
+            const content = document.getElementById('write-content').value.trim();
+            
+            if(!title || !content) return window.showToast('제목과 내용을 모두 입력해주세요.', 'error');
+            
+            const cat = window.appState.categories.find(c => c.id === window.boardState.currentCatId);
+            if(!cat.posts) cat.posts = [];
+            
+            const editPostId = window.boardState.editingPostId;
+            let originalPost = null;
+
+            if (editPostId) {
+                const postIdx = cat.posts.findIndex(p => p.id === editPostId);
+                if (postIdx > -1) {
+                    originalPost = { ...cat.posts[postIdx] };
+                    cat.posts[postIdx].title = title;
+                    cat.posts[postIdx].author = author || '관리자';
+                    cat.posts[postIdx].content = content;
+                }
+            } else {
+                const newPost = { id: generateId(), title, author: author || '관리자', date: new Date().toISOString().slice(0, 10), timestamp: Date.now(), views: 0, content, isNew: true };
+                cat.posts.unshift(newPost);
+            }
+            
+            const btn = document.getElementById('save-post-btn');
+            try {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 저장 중'; btn.disabled = true;
+                await setDoc(settingsRef, window.appState);
+                window.showToast(editPostId ? '게시글이 수정되었습니다.' : '게시글이 등록되었습니다.', 'success');
+                if (editPostId) {
+                    window.viewBoardPost(editPostId, true); // true를 주어 조회수 증가 방지
+                } else {
+                    window.renderBoardList(1, '');
+                }
+            } catch (e) {
+                window.showToast(editPostId ? '글 수정 실패: 권한을 확인하세요.' : '글 등록 실패: 권한을 확인하세요.', 'error');
+                if (!editPostId) {
+                    cat.posts.shift(); // 실패 시 롤백 (새 글)
+                } else if (originalPost) {
+                    const postIdx = cat.posts.findIndex(p => p.id === editPostId);
+                    if(postIdx > -1) cat.posts[postIdx] = originalPost; // 실패 시 롤백 (수정 글)
+                }
+            } finally {
+                btn.innerHTML = editPostId ? '수정하기' : '등록하기'; btn.disabled = false;
+                window.boardState.editingPostId = null;
+            }
+        };
+
+        window.deleteBoardPost = function(postId) {
+            window.openConfirm('게시글 삭제', '이 게시글을 완전히 삭제하시겠습니까?', async () => {
+                const cat = window.appState.categories.find(c => c.id === window.boardState.currentCatId);
+                const originalPosts = [...cat.posts];
+                cat.posts = cat.posts.filter(p => p.id !== postId);
+                
+                try {
+                    await setDoc(settingsRef, window.appState);
+                    window.showToast('삭제되었습니다.', 'success');
+                    window.renderBoardList(1, '');
+                } catch (e) {
+                    window.showToast('삭제 실패: 권한을 확인하세요.', 'error');
+                    cat.posts = originalPosts;
+                }
+            });
+        };
 
         // 관리자 제어
         window.handleGearClick = () => { if (auth.currentUser && !auth.currentUser.isAnonymous) window.openSettings(); else document.getElementById('login-modal').classList.remove('hidden'); };
@@ -488,7 +931,17 @@
         };
         window.logoutAdmin = async () => { await signOut(auth); try{await signInAnonymously(auth);}catch(e){} window.closeSettings(); window.showToast("로그아웃 되었습니다.", "success"); };
         
-        window.openSettings = () => { if(!window.appState) return; window.draftState = JSON.parse(JSON.stringify(window.appState)); window.renderSettingsBody(); document.getElementById('settings-modal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; };
+        window.openSettings = () => { 
+            if(!window.appState) return; 
+            window.draftState = JSON.parse(JSON.stringify(window.appState)); 
+            
+            // 처음 설정창 열 때 모든 메인메뉴를 '접힘' 상태로 초기화
+            window.collapsedSettings = new Set(window.draftState.categories.map(c => c.id));
+            
+            window.renderSettingsBody(); 
+            document.getElementById('settings-modal').classList.remove('hidden'); 
+            document.body.style.overflow = 'hidden'; 
+        };
         window.closeSettings = () => { document.getElementById('settings-modal').classList.add('hidden'); document.body.style.overflow = ''; window.draftState = null; };
         
         window.saveSettings = async () => {
@@ -502,6 +955,12 @@
             finally { btn.innerHTML = '변경사항 저장'; btn.disabled = false; }
         };
 
+        // 삭제 전용 커스텀 모달
+        window.pendingConfirmAction = null;
+        window.openConfirm = (title, message, action) => { document.getElementById('confirm-title').innerText = title; document.getElementById('confirm-message').innerText = message; window.pendingConfirmAction = action; document.getElementById('confirm-modal').classList.remove('hidden'); };
+        window.closeConfirm = () => { document.getElementById('confirm-modal').classList.add('hidden'); window.pendingConfirmAction = null; };
+        document.getElementById('confirm-ok-btn').addEventListener('click', () => { if(window.pendingConfirmAction) window.pendingConfirmAction(); window.closeConfirm(); });
+
         function renderIconDropdown(val, action) {
             let opts = iconList.map(i => `<option value="${i.class}" ${val === i.class ? 'selected' : ''}>${i.name}</option>`).join('');
             return `<div class="relative flex items-center w-full min-w-0"><i class="fas ${val} absolute left-3 top-2.5 text-gray-500 text-sm z-10"></i>
@@ -509,16 +968,32 @@
                     <i class="fas fa-chevron-down absolute right-3 top-2.5 text-gray-400 text-xs pointer-events-none"></i></div>`;
         }
 
+        window.toggleSettingCat = function(catId) {
+            if (window.collapsedSettings.has(catId)) {
+                window.collapsedSettings.delete(catId);
+            } else {
+                window.collapsedSettings.add(catId);
+            }
+            window.renderSettingsBody();
+        };
+
+        window.scrollToCat = function(id) {
+            window.collapsedSettings.delete(id);
+            window.renderSettingsBody();
+            setTimeout(() => document.getElementById('setting-cat-' + id)?.scrollIntoView({behavior: 'smooth', block: 'start'}), 50);
+        };
+
         window.renderSettingsBody = function() {
             const body = document.getElementById('settings-body');
             let html = `
                 <!-- 사이트 기본 정보 -->
                 <div class="mb-6 bg-emerald-50 p-4 md:p-5 rounded-xl border border-emerald-200 shadow-sm">
                     <h4 class="text-sm font-bold text-emerald-800 mb-4"><i class="fas fa-globe text-emerald-600 mr-1"></i> 사이트 기본 정보 설정</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="w-full"><label class="block text-xs font-semibold text-emerald-700 mb-1">페이지 제목</label><input type="text" value="${window.draftState.pageTitle || ''}" onchange="window.draftState.pageTitle = this.value" class="w-full px-3 py-2 border border-emerald-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-200"></div>
                         <div class="w-full"><label class="block text-xs font-semibold text-emerald-700 mb-1">저작권 문구</label><input type="text" value="${window.draftState.copyright || ''}" onchange="window.draftState.copyright = this.value" class="w-full px-3 py-2 border border-emerald-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-200"></div>
                         <div class="w-full"><label class="block text-xs font-semibold text-emerald-700 mb-1">문의 이메일</label><input type="email" value="${window.draftState.contactEmail || ''}" onchange="window.draftState.contactEmail = this.value" placeholder="admin@example.com" class="w-full px-3 py-2 border border-emerald-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-200"></div>
+                        <div class="w-full"><label class="block text-xs font-semibold text-red-600 mb-1"><i class="fas fa-key mr-1"></i>마스터 암호</label><input type="text" value="${window.draftState.masterPassword || ''}" onchange="window.draftState.masterPassword = this.value" placeholder="빈칸 시 미사용" class="w-full px-3 py-2 border border-red-300 bg-white rounded-lg text-sm outline-none focus:ring-2 focus:ring-red-200"></div>
                     </div>
                 </div>
 
@@ -533,12 +1008,22 @@
 
                 <!-- 메인메뉴 빠른 이동 (퀵 내비게이션 박스) -->
                 <div class="mb-6 bg-amber-50 p-4 md:p-5 rounded-xl border border-amber-200 shadow-sm">
-                    <h4 class="text-sm font-bold text-amber-800 mb-3"><i class="fas fa-location-arrow text-amber-600 mr-1"></i> 메인메뉴 빠른 이동</h4>
-                    <div class="flex flex-wrap gap-2">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-sm font-bold text-amber-800"><i class="fas fa-location-arrow text-amber-600 mr-1"></i> 메인메뉴 빠른 이동</h4>
+                        <button onclick="window.toggleQuickReorderMode()" class="px-3 py-1.5 ${window.isQuickReorderMode ? 'bg-amber-500 text-white hover:bg-amber-600' : 'bg-white text-amber-600 border border-amber-300 hover:bg-amber-100'} rounded-lg text-xs font-bold shadow-sm transition-colors flex items-center">
+                            ${window.isQuickReorderMode ? '<i class="fas fa-check mr-1.5"></i>순서 저장' : '<i class="fas fa-edit mr-1.5"></i>순서 변경'}
+                        </button>
+                    </div>
+                    ${window.isQuickReorderMode ? '<p class="text-[11px] md:text-xs text-amber-700 mb-3 bg-amber-100/80 p-2 rounded border border-amber-200"><i class="fas fa-info-circle mr-1"></i>버튼을 길게 누른 채 끌어서 순서를 변경한 뒤, 우측 상단의 <b>[순서 저장]</b>을 누르세요.</p>' : ''}
+                    <div id="quick-link-container" class="flex flex-wrap gap-2 ${window.isQuickReorderMode ? 'p-3 bg-amber-100/50 rounded-lg border border-dashed border-amber-400 min-h-[60px]' : ''}">
                         ${window.draftState.categories.map((c, i) => `
-                            <button onclick="document.getElementById('setting-cat-${c.id}').scrollIntoView({behavior: 'smooth', block: 'start'})" class="px-3 py-2 bg-white border border-amber-300 rounded-lg text-xs md:text-sm font-bold text-amber-900 hover:bg-amber-100 hover:text-amber-700 transition-colors shadow-sm flex items-center">
-                                <i class="fas ${c.icon} mr-1.5 text-amber-500"></i> ${c.title || `메인메뉴 ${i+1}`}
-                            </button>
+                            <div class="quick-link-item touch-none">
+                                <button ${window.isQuickReorderMode ? '' : `onclick="window.scrollToCat('${c.id}')"`} 
+                                        class="px-3 py-2 ${window.isQuickReorderMode ? 'bg-amber-50 border border-amber-400 ring-2 ring-amber-300 cursor-move opacity-90' : 'bg-white border border-amber-300 hover:bg-amber-100 hover:text-amber-700'} rounded-lg text-xs md:text-sm font-bold text-amber-900 transition-colors shadow-sm flex items-center select-none">
+                                    ${window.isQuickReorderMode ? '<i class="fas fa-grip-vertical mr-2 text-amber-500"></i>' : ''}
+                                    <i class="fas ${c.icon} mr-1.5 text-amber-500"></i> ${c.title || `메인메뉴 ${i+1}`}
+                                </button>
+                            </div>
                         `).join('')}
                     </div>
                 </div>
@@ -548,17 +1033,31 @@
 
             window.draftState.categories.forEach((cat, cIdx) => {
                 const isHidden = cIdx >= (window.draftState.columns * window.draftState.rows);
+                const isBoard = cat.type === 'board';
+                const isCollapsed = window.collapsedSettings.has(cat.id);
+                
                 html += `
                     <!-- 메인메뉴 영역 (파란색 바탕) -->
                     <div id="setting-cat-${cat.id}" class="border-2 border-blue-300 rounded-xl p-4 md:p-5 bg-blue-50 relative shadow-md w-full scroll-mt-4 ${isHidden ? 'opacity-50 grayscale' : ''}">
-                        ${isHidden ? `<span class="absolute -top-3 left-4 bg-gray-500 text-white text-xs px-2 py-0.5 rounded-full">미표시 (범위초과)</span>` : ''}
+                        ${isHidden ? `<span class="absolute -top-3 left-4 bg-gray-500 text-white text-xs px-2 py-0.5 rounded-full z-10">미표시 (범위초과)</span>` : ''}
                         
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 pb-3 border-b border-blue-200 gap-3">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center ${isCollapsed ? '' : 'mb-4 pb-3 border-b border-blue-200'} gap-3">
                             <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                                <h5 class="font-bold text-base md:text-lg text-blue-900 flex items-center">
+                                <button onclick="window.toggleSettingCat('${cat.id}')" class="text-blue-500 hover:text-white bg-white hover:bg-blue-500 border border-blue-200 w-8 h-8 rounded-lg flex items-center justify-center transition-colors shadow-sm mr-1">
+                                    <i class="fas ${isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'}"></i>
+                                </button>
+                                <h5 class="font-bold text-base md:text-lg text-blue-900 flex items-center cursor-pointer" onclick="window.toggleSettingCat('${cat.id}')">
                                     <span class="bg-blue-600 text-white px-2 py-1 rounded-md text-xs md:text-sm mr-2 shadow-sm">메인메뉴</span> 
-                                    <span class="text-xs md:text-sm font-normal text-blue-600">(${cIdx + 1}번째)</span>
+                                    <span class="text-xs md:text-sm font-normal text-blue-600 mr-2">(${cIdx + 1}번째)</span>
+                                    ${isCollapsed ? `<span class="text-sm text-gray-800 font-bold truncate max-w-[150px] md:max-w-xs">${cat.title || '제목 없음'}</span>` : ''}
                                 </h5>
+                                <div class="ml-2 flex items-center ${isCollapsed ? 'hidden md:flex' : ''}">
+                                    <label class="text-xs font-bold text-gray-500 mr-2 border-l border-gray-300 pl-3">유형:</label>
+                                    <select onchange="window.updateCat('${cat.id}', 'type', this.value)" class="px-2 py-1 bg-white border border-gray-300 rounded text-xs font-bold text-blue-700 outline-none shadow-sm cursor-pointer">
+                                        <option value="menu" ${!isBoard ? 'selected' : ''}>기본 메뉴 (하위 폴더/링크)</option>
+                                        <option value="board" ${isBoard ? 'selected' : ''}>게시판 모드 (공지사항)</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="flex gap-1.5 ml-auto">
                                 <button onclick="window.moveDraftCategoryUp('${cat.id}')" class="text-blue-500 hover:text-white bg-white hover:bg-blue-500 border border-blue-200 w-8 h-8 rounded-lg flex items-center justify-center disabled:opacity-30 transition-colors" ${cIdx === 0 ? 'disabled' : ''}><i class="fas fa-arrow-up text-xs"></i></button>
@@ -567,120 +1066,174 @@
                             </div>
                         </div>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-4 mb-5 w-full bg-white p-3 md:p-4 rounded-lg border border-blue-100 shadow-sm">
-                            <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">메뉴명</label><input type="text" value="${cat.title}" onchange="window.updateCat('${cat.id}', 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none"></div>
-                            <div class="w-full md:col-span-3"><label class="block text-xs font-semibold text-gray-500 mb-1">설명</label><input type="text" value="${cat.subtitle}" onchange="window.updateCat('${cat.id}', 'subtitle', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none"></div>
-                            <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">아이콘</label>${renderIconDropdown(cat.icon, `window.updateCat('${cat.id}', 'icon', this.value)`)}</div>
-                            <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">테마 색상</label><select onchange="window.updateCat('${cat.id}', 'color', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none">${Object.keys(palette).map(c => `<option value="${c}" ${cat.color === c ? 'selected' : ''}>${colorNames[c]||c}</option>`).join('')}</select></div>
-                            <div class="w-full md:col-span-1"><label class="block text-xs font-semibold text-red-500 mb-1"><i class="fas fa-lock text-xs mr-1"></i>암호</label><input type="text" value="${cat.password||''}" onchange="window.updateCat('${cat.id}', 'password', this.value)" placeholder="빈칸:없음" class="w-full px-3 py-2 border rounded-lg text-sm border-red-200 focus:ring-2 focus:ring-red-100 outline-none bg-red-50/20"></div>
-                            <div class="w-full md:col-span-5"><label class="block text-xs font-semibold text-blue-500 mb-1"><i class="fas fa-external-link-alt text-xs mr-1"></i>단독 링크</label><input type="text" value="${cat.link||''}" onchange="window.updateCat('${cat.id}', 'link', this.value)" placeholder="이동할 URL 입력 (입력 시 하위 목록 미표시)" class="w-full px-3 py-2 border rounded-lg text-sm border-blue-200 focus:ring-2 focus:ring-blue-100 outline-none"></div>
-                        </div>
-                        
-                        ${(cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#') ? `
-                            <div class="bg-indigo-50 text-indigo-600 text-xs md:text-sm p-3 md:p-4 rounded-lg text-center border border-indigo-200 font-medium w-full break-keep shadow-inner">
-                                <i class="fas fa-link mr-1"></i> 단독 링크 설정됨 (하위메뉴 숨김 처리)
+                        <div class="${isCollapsed ? 'hidden' : 'block'}">
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-4 mb-5 w-full bg-white p-3 md:p-4 rounded-lg border border-blue-100 shadow-sm">
+                                <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">${isBoard ? '게시판 명' : '메뉴명'}</label><input type="text" value="${cat.title}" onchange="window.updateCat('${cat.id}', 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none"></div>
+                                <div class="w-full md:col-span-3"><label class="block text-xs font-semibold text-gray-500 mb-1">설명</label><input type="text" value="${cat.subtitle}" onchange="window.updateCat('${cat.id}', 'subtitle', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none"></div>
+                                <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">아이콘</label>${renderIconDropdown(cat.icon, `window.updateCat('${cat.id}', 'icon', this.value)`)}</div>
+                                <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">테마 색상</label><select onchange="window.updateCat('${cat.id}', 'color', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none">${Object.keys(palette).map(c => `<option value="${c}" ${cat.color === c ? 'selected' : ''}>${colorNames[c]||c}</option>`).join('')}</select></div>
+                                <div class="w-full md:col-span-1"><label class="block text-xs font-semibold text-red-500 mb-1"><i class="fas fa-lock text-xs mr-1"></i>접근 암호</label><input type="text" value="${cat.password||''}" onchange="window.updateCat('${cat.id}', 'password', this.value)" placeholder="빈칸:없음" class="w-full px-3 py-2 border rounded-lg text-sm border-red-200 focus:ring-2 focus:ring-red-100 outline-none bg-red-50/20"></div>
+                                ${!isBoard ? `<div class="w-full md:col-span-5"><label class="block text-xs font-semibold text-blue-500 mb-1"><i class="fas fa-external-link-alt text-xs mr-1"></i>단독 링크</label><input type="text" value="${cat.link||''}" onchange="window.updateCat('${cat.id}', 'link', this.value)" placeholder="이동할 URL 입력 (입력 시 하위 목록 미표시)" class="w-full px-3 py-2 border rounded-lg text-sm border-blue-200 focus:ring-2 focus:ring-blue-100 outline-none"></div>` : ''}
                             </div>
-                        ` : `
-                        <!-- 1차 하위메뉴 영역 (남색/인디고 바탕) -->
-                        <div class="border border-indigo-200 rounded-lg p-3 md:p-4 bg-indigo-50 w-full shadow-inner">
-                            <div class="flex justify-between items-center mb-4 border-b border-indigo-200 pb-2">
-                                <h6 class="font-bold text-xs md:text-sm text-indigo-800 flex items-center"><i class="fas fa-layer-group text-indigo-500 mr-2"></i> 1차 하위 (그룹)</h6>
-                                <button onclick="window.addDraftGroup('${cat.id}')" class="text-[10px] md:text-xs bg-white border border-indigo-300 text-indigo-700 px-3 py-1.5 rounded-md font-bold hover:bg-indigo-100 whitespace-nowrap shadow-sm">+ 추가</button>
-                            </div>
-                            <div class="space-y-4 w-full">
-                                ${cat.groups && cat.groups.length > 0 ? cat.groups.map((group, gIdx) => `
-                                    <div class="bg-white border border-indigo-200 rounded-lg p-3 md:p-4 relative w-full shadow-sm">
-                                        
-                                        <div class="flex justify-between items-center mb-3 border-b border-indigo-50 pb-2">
-                                            <span class="text-[10px] md:text-xs font-bold text-indigo-400">그룹 설정</span>
-                                            <div class="flex gap-1">
-                                                <button onclick="window.moveDraftGroupUp('${cat.id}', ${gIdx})" class="text-indigo-400 hover:text-white bg-indigo-50 hover:bg-indigo-400 border border-indigo-100 w-6 h-6 md:w-7 md:h-7 rounded flex justify-center items-center disabled:opacity-30 transition-colors" ${gIdx===0?'disabled':''}><i class="fas fa-arrow-up text-[10px]"></i></button>
-                                                <button onclick="window.moveDraftGroupDown('${cat.id}', ${gIdx})" class="text-indigo-400 hover:text-white bg-indigo-50 hover:bg-indigo-400 border border-indigo-100 w-6 h-6 md:w-7 md:h-7 rounded flex justify-center items-center disabled:opacity-30 transition-colors" ${gIdx===cat.groups.length-1?'disabled':''}><i class="fas fa-arrow-down text-[10px]"></i></button>
-                                                <button onclick="window.removeDraftGroup('${cat.id}', ${gIdx})" class="text-red-400 hover:text-white bg-red-50 hover:bg-red-400 border border-red-100 w-6 h-6 md:w-7 md:h-7 rounded flex justify-center items-center ml-1 transition-colors"><i class="fas fa-times text-[10px]"></i></button>
+                            
+                            ${isBoard ? `
+                                <div class="bg-teal-50 text-teal-700 text-sm p-4 rounded-lg text-center border border-teal-200 font-bold w-full break-keep shadow-inner">
+                                    <i class="fas fa-clipboard-list mr-1 text-lg mb-2 block"></i> 
+                                    이 메뉴는 <strong class="underline decoration-teal-300 underline-offset-4">게시판</strong>으로 설정되었습니다.<br>
+                                    <span class="text-xs font-normal text-teal-600 mt-2 block">메인 화면에서 클릭 시 공지사항 형태의 게시판이 팝업으로 열립니다.<br>단독 링크 및 하위 메뉴(폴더) 설정은 비활성화됩니다.</span>
+                                </div>
+                            ` : (cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#') ? `
+                                <div class="bg-indigo-50 text-indigo-600 text-xs md:text-sm p-3 md:p-4 rounded-lg text-center border border-indigo-200 font-medium w-full break-keep shadow-inner">
+                                    <i class="fas fa-link mr-1"></i> 단독 링크 설정됨 (하위메뉴 숨김 처리)
+                                </div>
+                            ` : `
+                            <!-- 1차 하위메뉴 영역 (남색/인디고 바탕) -->
+                            <div class="border border-indigo-200 rounded-lg p-3 md:p-4 bg-indigo-50 w-full shadow-inner">
+                                <div class="flex justify-between items-center mb-4 border-b border-indigo-200 pb-2">
+                                    <h6 class="font-bold text-xs md:text-sm text-indigo-800 flex items-center"><i class="fas fa-layer-group text-indigo-500 mr-2"></i> 1차 하위 (그룹)</h6>
+                                    <button onclick="window.addDraftGroup('${cat.id}')" class="text-[10px] md:text-xs bg-white border border-indigo-300 text-indigo-700 px-3 py-1.5 rounded-md font-bold hover:bg-indigo-100 whitespace-nowrap shadow-sm">+ 추가</button>
+                                </div>
+                                <div class="space-y-4 w-full">
+                                    ${cat.groups && cat.groups.length > 0 ? cat.groups.map((group, gIdx) => `
+                                        <div id="setting-grp-${cat.id}-${gIdx}" class="bg-white border border-indigo-200 rounded-lg p-3 md:p-4 relative w-full shadow-sm">
+                                            
+                                            <div class="flex justify-between items-center mb-3 border-b border-indigo-50 pb-2">
+                                                <span class="text-[10px] md:text-xs font-bold text-indigo-400">그룹 설정 <span class="font-normal text-indigo-300">(${gIdx + 1}번째)</span></span>
+                                                <div class="flex gap-1">
+                                                    <button onclick="window.moveDraftGroupUp('${cat.id}', ${gIdx})" class="text-indigo-400 hover:text-white bg-indigo-50 hover:bg-indigo-400 border border-indigo-100 w-6 h-6 md:w-7 md:h-7 rounded flex justify-center items-center disabled:opacity-30 transition-colors" ${gIdx===0?'disabled':''}><i class="fas fa-arrow-up text-[10px]"></i></button>
+                                                    <button onclick="window.moveDraftGroupDown('${cat.id}', ${gIdx})" class="text-indigo-400 hover:text-white bg-indigo-50 hover:bg-indigo-400 border border-indigo-100 w-6 h-6 md:w-7 md:h-7 rounded flex justify-center items-center disabled:opacity-30 transition-colors" ${gIdx===cat.groups.length-1?'disabled':''}><i class="fas fa-arrow-down text-[10px]"></i></button>
+                                                    <button onclick="window.removeDraftGroup('${cat.id}', ${gIdx})" class="text-red-400 hover:text-white bg-red-50 hover:bg-red-400 border border-red-100 w-6 h-6 md:w-7 md:h-7 rounded flex justify-center items-center ml-1 transition-colors"><i class="fas fa-times text-[10px]"></i></button>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-4">
-                                            <div class="w-full md:col-span-2"><label class="block text-[10px] md:text-xs font-semibold text-gray-500 mb-1">제목</label><input type="text" value="${group.title}" onchange="window.updateGroup('${cat.id}', ${gIdx}, 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-indigo-100 outline-none"></div>
-                                            <div class="w-full"><label class="block text-[10px] md:text-xs font-semibold text-gray-500 mb-1">아이콘</label>${renderIconDropdown(group.icon, `window.updateGroup('${cat.id}', ${gIdx}, 'icon', this.value)`)}</div>
-                                            <div class="w-full"><label class="block text-[10px] md:text-xs font-semibold text-red-500 mb-1">암호</label><input type="text" value="${group.password||''}" onchange="window.updateGroup('${cat.id}', ${gIdx}, 'password', this.value)" placeholder="없음" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm border-red-200 bg-red-50/20 focus:ring-2 focus:ring-red-100 outline-none"></div>
-                                            <div class="w-full md:col-span-4"><label class="block text-[10px] md:text-xs font-semibold text-blue-500 mb-1">단독 링크</label><input type="text" value="${group.link||''}" onchange="window.updateGroup('${cat.id}', ${gIdx}, 'link', this.value)" placeholder="URL 입력 시 2차 하위메뉴 미작동" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm border-blue-200 focus:ring-2 focus:ring-blue-100 outline-none"></div>
-                                        </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full mb-4">
+                                                <div class="w-full md:col-span-2"><label class="block text-[10px] md:text-xs font-semibold text-gray-500 mb-1">제목</label><input type="text" value="${group.title}" onchange="window.updateGroup('${cat.id}', ${gIdx}, 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm focus:ring-2 focus:ring-indigo-100 outline-none"></div>
+                                                <div class="w-full"><label class="block text-[10px] md:text-xs font-semibold text-gray-500 mb-1">아이콘</label>${renderIconDropdown(group.icon, `window.updateGroup('${cat.id}', ${gIdx}, 'icon', this.value)`)}</div>
+                                                <div class="w-full"><label class="block text-[10px] md:text-xs font-semibold text-red-500 mb-1">암호</label><input type="text" value="${group.password||''}" onchange="window.updateGroup('${cat.id}', ${gIdx}, 'password', this.value)" placeholder="없음" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm border-red-200 bg-red-50/20 focus:ring-2 focus:ring-red-100 outline-none"></div>
+                                                <div class="w-full md:col-span-4"><label class="block text-[10px] md:text-xs font-semibold text-blue-500 mb-1">단독 링크</label><input type="text" value="${group.link||''}" onchange="window.updateGroup('${cat.id}', ${gIdx}, 'link', this.value)" placeholder="URL 입력 시 2차 하위메뉴 미작동" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm border-blue-200 focus:ring-2 focus:ring-blue-100 outline-none"></div>
+                                            </div>
 
-                                        ${(group.link && group.link.trim() !== '' && group.link.trim() !== '#') ? `
-                                            <div class="bg-slate-100 text-slate-600 text-[10px] md:text-xs p-2 rounded text-center border border-slate-300 font-medium mt-2 w-full">
-                                                <i class="fas fa-link mr-1"></i> 단독 링크 작동 (하위 링크 미표시)
-                                            </div>
-                                        ` : `
-                                        <!-- 2차 하위메뉴 영역 (회색 바탕) -->
-                                        <div class="bg-slate-100 border border-slate-300 rounded-lg p-3 w-full shadow-inner mt-2">
-                                            <div class="flex justify-between items-center mb-3 border-b border-slate-200 pb-2">
-                                                <h6 class="text-[10px] md:text-xs font-bold text-slate-700"><i class="fas fa-link mr-1 text-slate-500"></i> 2차 하위 (링크)</h6>
-                                                <button onclick="window.addDraftItem('${cat.id}', ${gIdx})" class="text-[10px] border border-slate-400 bg-white px-2 py-1.5 rounded-md hover:bg-slate-200 font-bold shadow-sm text-slate-700 transition-colors">+ 링크 추가</button>
-                                            </div>
-                                            <div class="space-y-3 w-full">
-                                                ${group.items && group.items.length > 0 ? group.items.map((item, iIdx) => `
-                                                    <div class="flex flex-col gap-2 p-3 bg-white border border-slate-200 rounded-lg w-full relative shadow-sm hover:border-slate-300 transition-colors">
-                                                        <div class="flex justify-between items-center">
-                                                            <span class="text-[10px] font-bold text-slate-400">링크 항목 #${iIdx + 1}</span>
-                                                            <div class="flex gap-1">
-                                                                <button onclick="window.moveDraftItemUp('${cat.id}', ${gIdx}, ${iIdx})" class="w-6 h-6 border bg-slate-50 rounded flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-500 disabled:opacity-30 transition-colors" ${iIdx===0?'disabled':''}><i class="fas fa-arrow-up text-[10px]"></i></button>
-                                                                <button onclick="window.moveDraftItemDown('${cat.id}', ${gIdx}, ${iIdx})" class="w-6 h-6 border bg-slate-50 rounded flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-500 disabled:opacity-30 transition-colors" ${iIdx===group.items.length-1?'disabled':''}><i class="fas fa-arrow-down text-[10px]"></i></button>
-                                                                <button onclick="window.removeDraftItem('${cat.id}', ${gIdx}, ${iIdx})" class="w-6 h-6 border bg-red-50 border-red-100 rounded flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white transition-colors md:hidden ml-auto"><i class="fas fa-times text-[10px]"></i></button>
+                                            ${(group.link && group.link.trim() !== '' && group.link.trim() !== '#') ? `
+                                                <div class="bg-slate-100 text-slate-600 text-[10px] md:text-xs p-2 rounded text-center border border-slate-300 font-medium mt-2 w-full">
+                                                    <i class="fas fa-link mr-1"></i> 단독 링크 작동 (하위 링크 미표시)
+                                                </div>
+                                            ` : `
+                                            <!-- 2차 하위메뉴 영역 (회색 바탕) -->
+                                            <div class="bg-slate-100 border border-slate-300 rounded-lg p-3 w-full shadow-inner mt-2">
+                                                <div class="flex justify-between items-center mb-3 border-b border-slate-200 pb-2">
+                                                    <h6 class="text-[10px] md:text-xs font-bold text-slate-700"><i class="fas fa-link mr-1 text-slate-500"></i> 2차 하위 (링크)</h6>
+                                                    <button onclick="window.addDraftItem('${cat.id}', ${gIdx})" class="text-[10px] border border-slate-400 bg-white px-2 py-1.5 rounded-md hover:bg-slate-200 font-bold shadow-sm text-slate-700 transition-colors">+ 링크 추가</button>
+                                                </div>
+                                                <div class="space-y-3 w-full">
+                                                    ${group.items && group.items.length > 0 ? group.items.map((item, iIdx) => `
+                                                        <div id="setting-item-${cat.id}-${gIdx}-${iIdx}" class="flex flex-col gap-2 p-3 bg-white border border-slate-200 rounded-lg w-full relative shadow-sm hover:border-slate-300 transition-colors">
+                                                            <div class="flex justify-between items-center">
+                                                                <span class="text-[10px] font-bold text-slate-400">링크 항목 #${iIdx + 1}</span>
+                                                                <div class="flex gap-1">
+                                                                    <button onclick="window.moveDraftItemUp('${cat.id}', ${gIdx}, ${iIdx})" class="w-6 h-6 border bg-slate-50 rounded flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-500 disabled:opacity-30 transition-colors" ${iIdx===0?'disabled':''}><i class="fas fa-arrow-up text-[10px]"></i></button>
+                                                                    <button onclick="window.moveDraftItemDown('${cat.id}', ${gIdx}, ${iIdx})" class="w-6 h-6 border bg-slate-50 rounded flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-500 disabled:opacity-30 transition-colors" ${iIdx===group.items.length-1?'disabled':''}><i class="fas fa-arrow-down text-[10px]"></i></button>
+                                                                    <button onclick="window.removeDraftItem('${cat.id}', ${gIdx}, ${iIdx})" class="w-6 h-6 border bg-red-50 border-red-100 rounded flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white transition-colors md:hidden ml-auto"><i class="fas fa-times text-[10px]"></i></button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="w-full flex flex-col md:flex-row items-center gap-2">
+                                                                <div class="flex-1 w-full min-w-0"><input type="text" value="${item.title}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'title', this.value)" placeholder="자료명" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-slate-200"></div>
+                                                                <div class="flex-1 w-full min-w-0"><input type="text" value="${item.link}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'link', this.value)" placeholder="URL" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-slate-200"></div>
+                                                                <div class="w-full md:w-24 lg:w-28 flex-shrink-0"><input type="text" value="${item.password||''}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'password', this.value)" placeholder="암호 (선택)" class="w-full px-3 py-2 border border-red-200 rounded-lg text-xs md:text-sm outline-none bg-red-50/20 focus:bg-white focus:ring-2 focus:ring-red-100"></div>
+                                                                <button onclick="window.removeDraftItem('${cat.id}', ${gIdx}, ${iIdx})" class="text-slate-400 hover:text-red-500 hover:bg-red-50 w-8 h-8 rounded-lg hidden md:flex items-center justify-center flex-shrink-0 ml-1 transition-colors"><i class="fas fa-times"></i></button>
                                                             </div>
                                                         </div>
-                                                        <div class="w-full flex flex-col md:flex-row items-center gap-2">
-                                                            <div class="flex-1 w-full min-w-0"><input type="text" value="${item.title}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'title', this.value)" placeholder="자료명" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-slate-200"></div>
-                                                            <div class="flex-1 w-full min-w-0"><input type="text" value="${item.link}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'link', this.value)" placeholder="URL" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-slate-200"></div>
-                                                            <div class="w-full md:w-24 lg:w-28 flex-shrink-0"><input type="text" value="${item.password||''}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'password', this.value)" placeholder="암호 (선택)" class="w-full px-3 py-2 border border-red-200 rounded-lg text-xs md:text-sm outline-none bg-red-50/20 focus:bg-white focus:ring-2 focus:ring-red-100"></div>
-                                                            <button onclick="window.removeDraftItem('${cat.id}', ${gIdx}, ${iIdx})" class="text-slate-400 hover:text-red-500 hover:bg-red-50 w-8 h-8 rounded-lg hidden md:flex items-center justify-center flex-shrink-0 ml-1 transition-colors"><i class="fas fa-times"></i></button>
-                                                        </div>
-                                                    </div>
-                                                `).join('') : '<p class="text-[10px] md:text-xs text-slate-500 text-center py-3 bg-white border border-dashed border-slate-300 rounded-lg w-full">등록된 자료가 없습니다.</p>'}
+                                                    `).join('') : '<p class="text-[10px] md:text-xs text-slate-500 text-center py-3 bg-white border border-dashed border-slate-300 rounded-lg w-full">등록된 자료가 없습니다.</p>'}
+                                                </div>
                                             </div>
+                                            `}
                                         </div>
-                                        `}
-                                    </div>
-                                `).join('') : '<p class="text-[10px] md:text-sm text-indigo-500 text-center py-4 w-full bg-white rounded-lg border border-dashed border-indigo-200">등록된 그룹이 없습니다.</p>'}
+                                    `).join('') : '<p class="text-[10px] md:text-sm text-indigo-500 text-center py-4 w-full bg-white rounded-lg border border-dashed border-indigo-200">등록된 그룹이 없습니다.</p>'}
+                                </div>
                             </div>
+                            `}
                         </div>
-                        `}
                     </div>
                 `;
             });
             html += `<button onclick="window.addDraftCategory()" class="w-full py-4 border-2 border-dashed border-blue-400 text-blue-700 bg-blue-50 rounded-xl font-bold text-sm shadow-sm mt-4 hover:bg-blue-100 transition-colors">+ 새 메인메뉴 추가하기</button></div>`;
             body.innerHTML = html;
+
+            // 순서 변경 모드일 때 SortableJS 초기화
+            if (window.isQuickReorderMode && typeof Sortable !== 'undefined') {
+                const container = document.getElementById('quick-link-container');
+                if (container) {
+                    Sortable.create(container, {
+                        animation: 150,
+                        ghostClass: 'opacity-40', // 드래그 중인 원본 요소의 투명도
+                        onEnd: function (evt) {
+                            const oldIndex = evt.oldIndex;
+                            const newIndex = evt.newIndex;
+                            if (oldIndex !== newIndex) {
+                                // 드래그한 결과에 맞게 배열 내부의 데이터 순서 즉시 변경
+                                const movedItem = window.draftState.categories.splice(oldIndex, 1)[0];
+                                window.draftState.categories.splice(newIndex, 0, movedItem);
+                            }
+                        }
+                    });
+                }
+            }
         }
 
-        window.updateCat = (id, field, value) => { const cat = window.draftState.categories.find(c => c.id === id); if(cat) { cat[field] = value; if(field === 'color' || field === 'link') window.renderSettingsBody(); } };
-        window.addDraftCategory = () => { window.draftState.categories.push({ id: generateId(), title: '새 메뉴', subtitle: '', icon: 'fa-folder', color: 'blue', password: '', link: '', groups: [] }); window.renderSettingsBody(); setTimeout(()=>document.getElementById('settings-body').scrollTop=9999,50); };
+        window.toggleQuickReorderMode = function() {
+            window.isQuickReorderMode = !window.isQuickReorderMode;
+            // 모드를 끄거나 켤 때 전체 화면을 다시 그려 변경된 배열 순서를 하단 메인메뉴 박스들에 일괄 적용
+            window.renderSettingsBody(); 
+        };
+
+        window.updateCat = (id, field, value) => { const cat = window.draftState.categories.find(c => c.id === id); if(cat) { cat[field] = value; if(field === 'color' || field === 'type' || field === 'link') window.renderSettingsBody(); } };
+        window.addDraftCategory = () => { 
+            const newId = generateId();
+            window.draftState.categories.push({ id: newId, type: 'menu', title: '새 메뉴', subtitle: '', icon: 'fa-folder', color: 'blue', password: '', link: '', groups: [], posts: [] }); 
+            window.collapsedSettings.delete(newId); // 새 항목은 펼친 상태로 시작
+            window.renderSettingsBody(); 
+            setTimeout(() => document.getElementById('setting-cat-' + newId)?.scrollIntoView({behavior: 'smooth', block: 'center'}), 50); 
+        };
         window.removeDraftCategory = (id) => { 
             window.openConfirm('메인메뉴 삭제', '메인메뉴와 포함된 모든 데이터가 삭제됩니다.', () => {
                 window.draftState.categories = window.draftState.categories.filter(c => c.id !== id); window.renderSettingsBody();
             });
         };
-        window.moveDraftCategoryUp = (id) => { const idx = window.draftState.categories.findIndex(c => c.id === id); if (idx > 0) { const temp = window.draftState.categories[idx - 1]; window.draftState.categories[idx - 1] = window.draftState.categories[idx]; window.draftState.categories[idx] = temp; window.renderSettingsBody(); } };
-        window.moveDraftCategoryDown = (id) => { const idx = window.draftState.categories.findIndex(c => c.id === id); if (idx > -1 && idx < window.draftState.categories.length - 1) { const temp = window.draftState.categories[idx + 1]; window.draftState.categories[idx + 1] = window.draftState.categories[idx]; window.draftState.categories[idx] = temp; window.renderSettingsBody(); } };
+        window.moveDraftCategoryUp = (id) => { const idx = window.draftState.categories.findIndex(c => c.id === id); if (idx > 0) { const temp = window.draftState.categories[idx - 1]; window.draftState.categories[idx - 1] = window.draftState.categories[idx]; window.draftState.categories[idx] = temp; window.renderSettingsBody(); setTimeout(() => document.getElementById('setting-cat-' + id)?.scrollIntoView({behavior: 'smooth', block: 'center'}), 50); } };
+        window.moveDraftCategoryDown = (id) => { const idx = window.draftState.categories.findIndex(c => c.id === id); if (idx > -1 && idx < window.draftState.categories.length - 1) { const temp = window.draftState.categories[idx + 1]; window.draftState.categories[idx + 1] = window.draftState.categories[idx]; window.draftState.categories[idx] = temp; window.renderSettingsBody(); setTimeout(() => document.getElementById('setting-cat-' + id)?.scrollIntoView({behavior: 'smooth', block: 'center'}), 50); } };
 
-        window.addDraftGroup = (catId) => { const cat = window.draftState.categories.find(c => c.id === catId); if(cat) { cat.groups.push({ id: generateId(), title: '새 그룹', icon: 'fa-folder', color: 'gray', password: '', link: '', items: [] }); window.renderSettingsBody(); } };
+        window.addDraftGroup = (catId) => { 
+            const cat = window.draftState.categories.find(c => c.id === catId); 
+            if(cat) { 
+                cat.groups.push({ id: generateId(), title: '새 그룹', icon: 'fa-folder', color: 'gray', password: '', link: '', items: [] }); 
+                window.renderSettingsBody(); 
+                setTimeout(() => document.getElementById('setting-grp-' + catId + '-' + (cat.groups.length - 1))?.scrollIntoView({behavior: 'smooth', block: 'center'}), 50);
+            } 
+        };
         window.updateGroup = (catId, gIdx, field, value) => { const cat = window.draftState.categories.find(c => c.id === catId); if(cat && cat.groups[gIdx]){ cat.groups[gIdx][field] = value; if(field === 'link') window.renderSettingsBody(); }};
         window.removeDraftGroup = (catId, gIdx) => { 
             window.openConfirm('그룹 삭제', '이 그룹과 포함된 링크 자료가 모두 삭제됩니다.', () => {
                 const cat = window.draftState.categories.find(c => c.id === catId); if(cat) { cat.groups.splice(gIdx, 1); window.renderSettingsBody(); }
             });
         };
-        window.moveDraftGroupUp = (catId, gIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && gIdx > 0) { const temp = cat.groups[gIdx - 1]; cat.groups[gIdx - 1] = cat.groups[gIdx]; cat.groups[gIdx] = temp; window.renderSettingsBody(); } };
-        window.moveDraftGroupDown = (catId, gIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && gIdx < cat.groups.length - 1) { const temp = cat.groups[gIdx + 1]; cat.groups[gIdx + 1] = cat.groups[gIdx]; cat.groups[gIdx] = temp; window.renderSettingsBody(); } };
+        window.moveDraftGroupUp = (catId, gIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && gIdx > 0) { const temp = cat.groups[gIdx - 1]; cat.groups[gIdx - 1] = cat.groups[gIdx]; cat.groups[gIdx] = temp; window.renderSettingsBody(); setTimeout(() => document.getElementById('setting-grp-' + catId + '-' + (gIdx - 1))?.scrollIntoView({behavior: 'smooth', block: 'center'}), 50); } };
+        window.moveDraftGroupDown = (catId, gIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && gIdx < cat.groups.length - 1) { const temp = cat.groups[gIdx + 1]; cat.groups[gIdx + 1] = cat.groups[gIdx]; cat.groups[gIdx] = temp; window.renderSettingsBody(); setTimeout(() => document.getElementById('setting-grp-' + catId + '-' + (gIdx + 1))?.scrollIntoView({behavior: 'smooth', block: 'center'}), 50); } };
 
-        window.addDraftItem = (catId, gIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if(cat && cat.groups[gIdx]) { cat.groups[gIdx].items.push({ title: '', link: '#', password: '' }); window.renderSettingsBody(); } };
+        window.addDraftItem = (catId, gIdx) => { 
+            const cat = window.draftState.categories.find(c => c.id === catId); 
+            if(cat && cat.groups[gIdx]) { 
+                cat.groups[gIdx].items.push({ title: '', link: '#', password: '' }); 
+                window.renderSettingsBody(); 
+                setTimeout(() => document.getElementById('setting-item-' + catId + '-' + gIdx + '-' + (cat.groups[gIdx].items.length - 1))?.scrollIntoView({behavior: 'smooth', block: 'center'}), 50);
+            } 
+        };
         window.updateItem = (catId, gIdx, iIdx, field, value) => { const cat = window.draftState.categories.find(c => c.id === catId); if(cat && cat.groups[gIdx] && cat.groups[gIdx].items[iIdx]) { cat.groups[gIdx].items[iIdx][field] = value; } };
         window.removeDraftItem = (catId, gIdx, iIdx) => { 
             window.openConfirm('링크 삭제', '해당 링크 자료를 삭제하시겠습니까?', () => {
                 const cat = window.draftState.categories.find(c => c.id === catId); if(cat && cat.groups[gIdx]) { cat.groups[gIdx].items.splice(iIdx, 1); window.renderSettingsBody(); }
             });
         };
-        window.moveDraftItemUp = (catId, gIdx, iIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && cat.groups[gIdx] && iIdx > 0) { const temp = cat.groups[gIdx].items[iIdx - 1]; cat.groups[gIdx].items[iIdx - 1] = cat.groups[gIdx].items[iIdx]; cat.groups[gIdx].items[iIdx] = temp; window.renderSettingsBody(); } };
-        window.moveDraftItemDown = (catId, gIdx, iIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && cat.groups[gIdx] && iIdx < cat.groups[gIdx].items.length - 1) { const temp = cat.groups[gIdx].items[iIdx + 1]; cat.groups[gIdx].items[iIdx + 1] = cat.groups[gIdx].items[iIdx]; cat.groups[gIdx].items[iIdx] = temp; window.renderSettingsBody(); } };
+        window.moveDraftItemUp = (catId, gIdx, iIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && cat.groups[gIdx] && iIdx > 0) { const temp = cat.groups[gIdx].items[iIdx - 1]; cat.groups[gIdx].items[iIdx - 1] = cat.groups[gIdx].items[iIdx]; cat.groups[gIdx].items[iIdx] = temp; window.renderSettingsBody(); setTimeout(() => document.getElementById('setting-item-' + catId + '-' + gIdx + '-' + (iIdx - 1))?.scrollIntoView({behavior: 'smooth', block: 'center'}), 50); } };
+        window.moveDraftItemDown = (catId, gIdx, iIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && cat.groups[gIdx] && iIdx < cat.groups[gIdx].items.length - 1) { const temp = cat.groups[gIdx].items[iIdx + 1]; cat.groups[gIdx].items[iIdx + 1] = cat.groups[gIdx].items[iIdx]; cat.groups[gIdx].items[iIdx] = temp; window.renderSettingsBody(); setTimeout(() => document.getElementById('setting-item-' + catId + '-' + gIdx + '-' + (iIdx + 1))?.scrollIntoView({behavior: 'smooth', block: 'center'}), 50); } };
 
         window.showToast = (message, type) => {
             const toast = document.getElementById('toast'), icon = document.getElementById('toast-icon');
