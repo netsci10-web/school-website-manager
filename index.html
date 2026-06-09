@@ -121,7 +121,7 @@
     </footer>
 
     <!-- 관리자 로그인 모달 -->
-    <div id="login-modal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="login-modal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm relative">
             <button onclick="document.getElementById('login-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700"><i class="fas fa-times"></i></button>
             <div class="text-center mb-6">
@@ -159,25 +159,44 @@
 
     <!-- 게시판 (Board) 풀스크린 모달 -->
     <div id="board-modal" class="fixed inset-0 bg-gray-50 z-[45] hidden flex-col h-full w-full overflow-hidden">
-        <!-- 게시판 헤더 -->
         <header class="bg-white border-b border-gray-200 px-4 md:px-8 py-4 flex items-center justify-between shrink-0 shadow-sm">
-            <div class="flex items-center gap-3">
-                <button onclick="window.closeBoardApp()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors"><i class="fas fa-arrow-left text-lg"></i></button>
-                <div>
-                    <h2 id="board-modal-title" class="text-xl font-bold text-gray-800">게시판</h2>
-                    <p id="board-modal-desc" class="text-xs text-gray-500 mt-0.5">게시판 설명</p>
+            <div class="flex items-center gap-3 w-full">
+                <button onclick="window.closeBoardApp()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors flex-shrink-0"><i class="fas fa-arrow-left text-lg"></i></button>
+                <div class="flex items-center gap-3 flex-1">
+                    <div>
+                        <h2 id="board-modal-title" class="text-xl font-bold text-gray-800">게시판</h2>
+                        <p id="board-modal-desc" class="text-xs text-gray-500 mt-0.5">게시판 설명</p>
+                    </div>
+                    <button id="board-login-btn" onclick="document.getElementById('login-modal').classList.remove('hidden')" class="hidden ml-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold border border-blue-200 hover:bg-blue-100 transition-colors shadow-sm flex items-center whitespace-nowrap"><i class="fas fa-sign-in-alt mr-1.5"></i>관리자 로그인 (글쓰기)</button>
                 </div>
             </div>
         </header>
-
-        <!-- 게시판 본문 (리스트 / 읽기 / 쓰기 렌더링 영역) -->
         <div class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
             <div class="max-w-6xl mx-auto" id="board-content-area"></div>
         </div>
     </div>
 
+    <!-- 할일(Todo) 관리 모달 -->
+    <div id="todo-modal" class="fixed inset-0 bg-gray-50 z-[45] hidden flex-col h-full w-full overflow-hidden">
+        <header class="bg-white border-b border-gray-200 px-4 md:px-8 py-4 flex items-center justify-between shrink-0 shadow-sm">
+            <div class="flex items-center gap-3 w-full">
+                <button onclick="window.closeTodoApp()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors flex-shrink-0"><i class="fas fa-arrow-left text-lg"></i></button>
+                <div class="flex items-center gap-3 flex-1">
+                    <div>
+                        <h2 id="todo-modal-title" class="text-xl font-bold text-gray-800">할일 관리</h2>
+                        <p id="todo-modal-desc" class="text-xs text-gray-500 mt-0.5">할일 설명</p>
+                    </div>
+                    <button id="todo-login-btn" onclick="document.getElementById('login-modal').classList.remove('hidden')" class="hidden ml-2 px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-xs font-bold border border-amber-200 hover:bg-amber-100 transition-colors shadow-sm flex items-center whitespace-nowrap"><i class="fas fa-sign-in-alt mr-1.5"></i>관리자 로그인 (할일 등록)</button>
+                </div>
+            </div>
+        </header>
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+            <div class="max-w-4xl mx-auto" id="todo-content-area"></div>
+        </div>
+    </div>
+
     <!-- 커스텀 삭제 확인 모달 -->
-    <div id="confirm-modal" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+    <div id="confirm-modal" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all">
             <div class="p-6 text-center">
                 <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 text-xl"><i class="fas fa-exclamation-triangle"></i></div>
@@ -192,7 +211,7 @@
     </div>
 
     <!-- 통합 암호 모달 -->
-    <div id="pw-modal" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm z-[55] hidden flex items-center justify-center p-4">
+    <div id="pw-modal" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm z-[65] hidden flex items-center justify-center p-4">
         <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm relative">
             <button onclick="window.closePasswordModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700"><i class="fas fa-times"></i></button>
             <div class="text-center mb-6">
@@ -206,7 +225,7 @@
     </div>
 
     <!-- 토스트 알림 -->
-    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg z-[70] flex items-center gap-3">
+    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg z-[80] flex items-center gap-3">
         <i class="fas fa-check-circle text-green-400" id="toast-icon"></i>
         <span id="toast-msg" class="text-sm font-medium truncate max-w-xs">알림</span>
     </div>
@@ -247,7 +266,8 @@
             { class: 'fa-tag', name: '태그' }, { class: 'fa-school', name: '학교 건물' },
             { class: 'fa-exclamation', name: '중요/느낌표' }, { class: 'fa-info-circle', name: '정보/안내' },
             { class: 'fa-building', name: '건물/시설' }, { class: 'fa-users', name: '사용자/교직원' },
-            { class: 'fa-clipboard-list', name: '게시판/목록' }, { class: 'fa-link', name: '링크/연결' }
+            { class: 'fa-clipboard-list', name: '게시판/목록' }, { class: 'fa-link', name: '링크/연결' },
+            { class: 'fa-check-square', name: '체크박스/할일' }
         ];
 
         const defaultState = {
@@ -266,8 +286,9 @@
             if (data.masterPassword === undefined) data.masterPassword = '';
 
             data.categories.forEach(cat => {
-                if(cat.type === undefined) cat.type = 'menu'; // 기존 데이터는 기본 메뉴로
-                if(cat.posts === undefined) cat.posts = []; // 게시판 전용 글 저장 배열
+                if(cat.type === undefined) cat.type = 'menu'; 
+                if(cat.posts === undefined) cat.posts = []; 
+                if(cat.todos === undefined) cat.todos = []; // 할일 전용 배열 초기화
                 if(cat.password === undefined) cat.password = '';
                 if(cat.link === undefined) cat.link = '';
                 if (!cat.groups && cat.items) {
@@ -296,17 +317,11 @@
         window.appState = null; window.draftState = null;
         window.unlockedEntities = new Set(); window.currentPendingTarget = null;
         window.isMasterUnlocked = false; 
-        window.isQuickReorderMode = false; // 빠른 이동 순서 변경 모드 상태 변수
-        window.collapsedSettings = new Set(); // 접힌 설정 박스 상태
+        window.isQuickReorderMode = false;
+        window.collapsedSettings = new Set();
         
-        // 게시판 구동용 상태 (현재 어떤 화면을 보고 있는지 기억)
-        window.boardState = {
-            currentCatId: null,
-            currentPage: 1,
-            searchQuery: '',
-            currentPostId: null, // 현재 열려있는 게시물 ID (null이면 리스트, 'write'면 글쓰기 화면)
-            editingPostId: null // 현재 수정 중인 게시물 ID 추가
-        };
+        window.boardState = { currentCatId: null, currentPage: 1, searchQuery: '', currentPostId: null, editingPostId: null };
+        window.todoState = { currentCatId: null }; // 할일 모달용 상태
         
         function initApp() {
             const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -322,17 +337,17 @@
                     document.getElementById('loading-indicator').classList.add('hidden');
                     document.getElementById('main-grid').classList.remove('hidden');
                     
-                    // 만약 게시판을 보고 있는 도중이라면 게시판 내용도 업데이트하되, 현재 보고 있는 화면 유지
                     if (document.getElementById('board-modal').classList.contains('hidden') === false && window.boardState.currentCatId) {
                         if (window.boardState.currentPostId === 'write') {
-                            // 글 작성 중일 때는 렌더링 덮어쓰기 방지 (작성 중인 내용 유지)
                         } else if (window.boardState.currentPostId) {
-                            // 상세 글을 보고 있었다면 글 뷰 업데이트 (조회수 중복 증가 방지)
                             window.viewBoardPost(window.boardState.currentPostId, true);
                         } else {
-                            // 목록 화면이었다면 리스트 렌더링
                             window.renderBoardList(window.boardState.currentPage, window.boardState.searchQuery, true);
                         }
+                    }
+
+                    if (document.getElementById('todo-modal').classList.contains('hidden') === false && window.todoState.currentCatId) {
+                        window.renderTodoList();
                     }
                     
                     window.renderMain();
@@ -375,7 +390,7 @@
                 const isCatLocked = cat.password && cat.password.trim() !== '';
                 const catLockIcon = isCatLocked ? (window.isMasterUnlocked || window.unlockedEntities.has(cat.id) ? `<i class="fas fa-lock-open text-green-400 ml-2 text-sm" title="잠금 해제됨"></i>` : `<i class="fas fa-lock text-gray-300 ml-2 text-sm" title="암호 보호됨"></i>`) : '';
                 
-                // 타입에 따른 렌더링 분기
+                // --- 게시판 렌더링 ---
                 if (cat.type === 'board') {
                     let boardPostsHtml = '';
                     if (cat.posts && cat.posts.length > 0) {
@@ -418,6 +433,48 @@
                             <i class="fas fa-chevron-right text-gray-400 transition-transform duration-300 flex-shrink-0"></i>
                         </button>
                         ${boardPostsHtml}
+                    </div>`;
+                }
+
+                // --- 할일(Todo) 게시판 렌더링 ---
+                if (cat.type === 'todo') {
+                    const uncompletedTodos = (cat.todos || []).filter(t => !t.completed).sort((a, b) => {
+                        if (!a.date && !b.date) return (a.timestamp || 0) - (b.timestamp || 0);
+                        if (!a.date) return 1;
+                        if (!b.date) return -1;
+                        return new Date(a.date) - new Date(b.date);
+                    });
+                    let todosHtml = '';
+                    if (uncompletedTodos.length > 0) {
+                        todosHtml = `<div class="border-t border-gray-100 bg-amber-50/20 rounded-b-xl overflow-hidden p-3 md:p-4 space-y-2">`;
+                        uncompletedTodos.forEach(todo => {
+                            todosHtml += `
+                                <div id="main-todo-${todo.id}" class="flex items-center gap-2.5 p-3 bg-white border border-gray-200 rounded-lg shadow-sm transition-all duration-500 ease-in-out">
+                                    <input type="checkbox" onchange="window.checkTodoMain(event, '${cat.id}', '${todo.id}')" class="w-4 h-4 md:w-5 md:h-5 text-teal-600 rounded border-gray-300 focus:ring-teal-500 cursor-pointer flex-shrink-0 shadow-sm">
+                                    <span class="font-medium text-gray-700 text-xs md:text-sm flex-1 truncate transition-all duration-300">${todo.title}</span>
+                                    ${todo.assignee ? `<span class="text-[10px] md:text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md border border-gray-200 whitespace-nowrap flex-shrink-0 font-medium">@${todo.assignee}</span>` : ''}
+                                    ${todo.date ? `<span class="text-[10px] md:text-xs text-gray-400 whitespace-nowrap flex-shrink-0 ml-1"><i class="far fa-calendar-alt"></i> ${todo.date}</span>` : ''}
+                                </div>
+                            `;
+                        });
+                        todosHtml += `</div>`;
+                    } else {
+                        todosHtml = `<div class="border-t border-gray-100 bg-gray-50/50 rounded-b-xl px-4 py-6 text-center text-xs md:text-sm text-gray-400"><i class="fas fa-glass-cheers text-xl mb-2 block text-gray-300"></i>남은 할 일이 없습니다!</div>`;
+                    }
+
+                    return `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200 card-entrance flex flex-col" style="animation-delay: ${index * 60}ms;">
+                        <button onclick="window.handleCategoryClick(event, '${cat.id}')" class="w-full p-4 md:p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200 rounded-t-xl z-10">
+                            <div class="flex items-center min-w-0 flex-1 pr-2">
+                                <div class="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 ${colors.bg} rounded-full flex items-center justify-center mr-3 md:mr-4"><i class="fas ${cat.icon} ${colors.text} text-lg md:text-xl"></i></div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-base md:text-lg font-bold text-gray-800 flex items-center truncate w-full">${cat.title} <span class="ml-3 px-3 py-1 bg-amber-500 text-white rounded-lg text-[11px] md:text-xs font-bold shadow-sm transition-colors flex-shrink-0 flex items-center"><i class="fas fa-check-square mr-1"></i>할일 관리</span> ${catLockIcon}</h3>
+                                    <p class="text-xs md:text-sm text-gray-500 mt-1 truncate w-full">${cat.subtitle}</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400 transition-transform duration-300 flex-shrink-0"></i>
+                        </button>
+                        ${todosHtml}
                     </div>`;
                 }
 
@@ -505,6 +562,10 @@
                     if(event) event.preventDefault();
                     window.openBoardApp(cat.id);
                     return false;
+                } else if (cat.type === 'todo') {
+                    if(event) event.preventDefault();
+                    window.openTodoApp(cat.id);
+                    return false;
                 } else if (cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#') {
                     return true; 
                 } else if (cat.groups && cat.groups.length > 0) {
@@ -519,6 +580,7 @@
 
         function executeCatAction(cat) {
             if (cat.type === 'board') window.openBoardApp(cat.id);
+            else if (cat.type === 'todo') window.openTodoApp(cat.id);
             else if (cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#') window.open(formatUrl(cat.link), '_blank');
             else if (cat.groups && cat.groups.length > 0) window.toggleSection(cat.id);
         }
@@ -564,20 +626,15 @@
             else if (group.items && group.items.length > 0) window.toggleSection(groupId);
         }
 
-        // 최신 게시물 클릭 시 게시판 & 해당 글 바로 열기 기능
         window.openBoardAppAndPost = function(catId, postId) {
             const cat = window.appState.categories.find(c => c.id === catId);
             if (!cat) return;
-            
-            // 게시판 자체에 암호가 있는지 확인
             if (!window.isMasterUnlocked && cat.password && cat.password.trim() !== '' && !window.unlockedEntities.has(catId)) {
                 window.currentPendingTarget = { type: 'board_post', catId, postId }; 
                 window.openPasswordModal();
                 return;
             }
-
             window.openBoardApp(catId);
-            // 모달 렌더링 후 상세 페이지가 열리도록 약간의 시간차를 둠
             setTimeout(() => window.viewBoardPost(postId), 50);
         };
 
@@ -648,8 +705,7 @@
             document.getElementById('board-modal-desc').innerText = cat.subtitle || '게시판입니다.';
             
             document.getElementById('board-modal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // 바탕 스크롤 방지
-            
+            document.body.style.overflow = 'hidden'; 
             window.renderBoardList(1, '');
         };
 
@@ -661,7 +717,7 @@
         };
 
         window.renderBoardList = function(page = 1, searchQuery = '', skipFocus = false) {
-            window.boardState.currentPostId = null; // 화면이 리스트로 바뀌었음을 저장
+            window.boardState.currentPostId = null; 
             const cat = window.appState.categories.find(c => c.id === window.boardState.currentCatId);
             if (!cat) return;
             
@@ -669,7 +725,7 @@
             window.boardState.searchQuery = searchQuery;
 
             let posts = cat.posts || [];
-            posts = [...posts].sort((a, b) => (b.timestamp || new Date(b.date).getTime()) - (a.timestamp || new Date(a.date).getTime())); // 최신글이 위로
+            posts = [...posts].sort((a, b) => (b.timestamp || new Date(b.date).getTime()) - (a.timestamp || new Date(a.date).getTime()));
 
             if (searchQuery) {
                 const kw = searchQuery.toLowerCase();
@@ -686,13 +742,16 @@
             const startIdx = (window.boardState.currentPage - 1) * itemsPerPage;
             const paginatedPosts = posts.slice(startIdx, startIdx + itemsPerPage);
 
-            // 관리자 권한 확인 (글쓰기 버튼 표시 여부)
             const isAdmin = auth.currentUser && !auth.currentUser.isAnonymous;
+            const bBtn = document.getElementById('board-login-btn');
+            if (bBtn) {
+                if (isAdmin) bBtn.classList.add('hidden');
+                else bBtn.classList.remove('hidden');
+            }
             
             const area = document.getElementById('board-content-area');
             
             let html = `
-                <!-- 상단 헤더 및 검색 -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4 px-2">
                     <div class="text-sm text-gray-600">전체 <strong class="text-teal-600">${totalItems}</strong>건 (${window.boardState.currentPage} / ${totalPages})</div>
                     <div class="flex items-center gap-2 w-full md:w-auto">
@@ -704,9 +763,7 @@
                     </div>
                 </div>
 
-                <!-- 테이블 -->
                 <div class="bg-white border-t-2 border-gray-800 border-b border-gray-200">
-                    <!-- 헤더 -->
                     <div class="hidden md:grid grid-cols-12 gap-2 p-3 bg-gray-50 text-sm font-bold text-center border-b border-gray-200">
                         <div class="col-span-1">순번</div>
                         <div class="col-span-7">제목</div>
@@ -714,7 +771,6 @@
                         <div class="col-span-1">등록일시</div>
                         <div class="col-span-1">조회수</div>
                     </div>
-                    <!-- 리스트 -->
                     <div class="divide-y divide-gray-100">
                         ${paginatedPosts.length > 0 ? paginatedPosts.map((post, idx) => {
                             const postNum = totalItems - startIdx - idx;
@@ -736,15 +792,11 @@
                     </div>
                 </div>
 
-                <!-- 하단 액션 및 페이징 -->
                 <div class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4 px-2">
-                    <div class="w-full md:w-auto invisible md:visible flex-1"></div> <!-- 공간 맞춤용 -->
-                    
-                    <!-- 페이징 -->
+                    <div class="w-full md:w-auto invisible md:visible flex-1"></div>
                     <div class="flex gap-1">
                         <button onclick="window.renderBoardList(1, '${searchQuery}')" class="w-8 h-8 flex items-center justify-center border rounded bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-30" ${window.boardState.currentPage === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left text-xs"></i></button>
                         <button onclick="window.renderBoardList(${window.boardState.currentPage - 1}, '${searchQuery}')" class="w-8 h-8 flex items-center justify-center border rounded bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-30" ${window.boardState.currentPage === 1 ? 'disabled' : ''}><i class="fas fa-angle-left text-xs"></i></button>
-                        
                         <div class="flex gap-1 px-2">
                             ${Array.from({length: Math.min(5, totalPages)}, (_, i) => {
                                 let pageNum = window.boardState.currentPage > 3 ? window.boardState.currentPage - 2 + i : i + 1;
@@ -753,37 +805,30 @@
                                 return `<button onclick="window.renderBoardList(${pageNum}, '${searchQuery}')" class="w-8 h-8 flex items-center justify-center border rounded ${isActive ? 'bg-white border-teal-500 text-teal-600 font-bold' : 'bg-white text-gray-600 hover:bg-gray-50'}">${pageNum}</button>`;
                             }).join('')}
                         </div>
-
                         <button onclick="window.renderBoardList(${window.boardState.currentPage + 1}, '${searchQuery}')" class="w-8 h-8 flex items-center justify-center border rounded bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-30" ${window.boardState.currentPage === totalPages ? 'disabled' : ''}><i class="fas fa-angle-right text-xs"></i></button>
                         <button onclick="window.renderBoardList(${totalPages}, '${searchQuery}')" class="w-8 h-8 flex items-center justify-center border rounded bg-white text-gray-500 hover:bg-gray-50 disabled:opacity-30" ${window.boardState.currentPage === totalPages ? 'disabled' : ''}><i class="fas fa-angle-double-right text-xs"></i></button>
                     </div>
-
                     <div class="w-full md:w-auto flex-1 flex justify-end">
                         ${isAdmin ? `<button onclick="window.openBoardWrite()" class="px-5 py-2 bg-teal-600 text-white font-bold rounded shadow hover:bg-teal-700 transition-colors w-full md:w-auto">글쓰기</button>` : ''}
                     </div>
                 </div>
             `;
-            
             area.innerHTML = html;
         };
 
-        // isSnapshotUpdate가 true일 경우 서버 갱신으로 인한 리렌더링이므로 조회수를 올리지 않음
         window.viewBoardPost = function(postId, isSnapshotUpdate = false) {
             const cat = window.appState.categories.find(c => c.id === window.boardState.currentCatId);
             const post = cat.posts.find(p => p.id === postId);
             
             if (!post) {
-                // 게시물이 삭제되었을 경우 목록으로 이동
                 window.renderBoardList(window.boardState.currentPage, window.boardState.searchQuery);
                 return;
             }
 
-            window.boardState.currentPostId = postId; // 현재 열린 게시물 ID 기록
+            window.boardState.currentPostId = postId;
 
             if (!isSnapshotUpdate) {
                 post.views = (post.views || 0) + 1;
-                
-                // 관리자일 경우 조회수를 서버에 업데이트 (일반 사용자는 조회수 업데이트 시 권한에러 나므로 로컬만 반영)
                 if (auth.currentUser && !auth.currentUser.isAnonymous) {
                     setDoc(settingsRef, window.appState).catch(e => console.warn("조회수 업데이트 생략"));
                 }
@@ -816,8 +861,8 @@
         };
 
         window.openBoardWrite = function(editPostId = null) {
-            window.boardState.currentPostId = 'write'; // 글 작성 상태 기록
-            window.boardState.editingPostId = editPostId; // 수정 상태 기록
+            window.boardState.currentPostId = 'write';
+            window.boardState.editingPostId = editPostId; 
             
             let post = { title: '', author: '', content: '' };
             if (editPostId) {
@@ -826,9 +871,6 @@
             }
 
             const area = document.getElementById('board-content-area');
-            const today = new Date().toISOString().slice(0, 10);
-            
-            // 입력창 이스케이프 (따옴표 깨짐 방지)
             const safeContent = post.content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             const safeTitle = post.title.replace(/"/g, '&quot;');
             const safeAuthor = post.author.replace(/"/g, '&quot;');
@@ -881,17 +923,16 @@
                 await setDoc(settingsRef, window.appState);
                 window.showToast(editPostId ? '게시글이 수정되었습니다.' : '게시글이 등록되었습니다.', 'success');
                 if (editPostId) {
-                    window.viewBoardPost(editPostId, true); // true를 주어 조회수 증가 방지
+                    window.viewBoardPost(editPostId, true);
                 } else {
                     window.renderBoardList(1, '');
                 }
             } catch (e) {
                 window.showToast(editPostId ? '글 수정 실패: 권한을 확인하세요.' : '글 등록 실패: 권한을 확인하세요.', 'error');
-                if (!editPostId) {
-                    cat.posts.shift(); // 실패 시 롤백 (새 글)
-                } else if (originalPost) {
+                if (!editPostId) { cat.posts.shift(); } 
+                else if (originalPost) {
                     const postIdx = cat.posts.findIndex(p => p.id === editPostId);
-                    if(postIdx > -1) cat.posts[postIdx] = originalPost; // 실패 시 롤백 (수정 글)
+                    if(postIdx > -1) cat.posts[postIdx] = originalPost;
                 }
             } finally {
                 btn.innerHTML = editPostId ? '수정하기' : '등록하기'; btn.disabled = false;
@@ -916,6 +957,201 @@
             });
         };
 
+        /* --------------------------------------------------------
+           할일(Todo) 어플리케이션 영역
+           -------------------------------------------------------- */
+        window.openTodoApp = function(catId) {
+            const cat = window.appState.categories.find(c => c.id === catId);
+            if (!cat || cat.type !== 'todo') return;
+            window.todoState.currentCatId = catId;
+            document.getElementById('todo-modal-title').innerText = cat.title;
+            document.getElementById('todo-modal-desc').innerText = cat.subtitle || '할일 목록 관리';
+            document.getElementById('todo-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            window.renderTodoList();
+        };
+
+        window.closeTodoApp = function() {
+            document.getElementById('todo-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+            window.todoState.currentCatId = null;
+        };
+
+        window.renderTodoList = function() {
+            const cat = window.appState.categories.find(c => c.id === window.todoState.currentCatId);
+            if(!cat) return;
+            const isAdmin = auth.currentUser && !auth.currentUser.isAnonymous;
+            
+            const tBtn = document.getElementById('todo-login-btn');
+            if (tBtn) {
+                if (isAdmin) tBtn.classList.add('hidden');
+                else tBtn.classList.remove('hidden');
+            }
+
+            const area = document.getElementById('todo-content-area');
+            
+            let html = '';
+            if (isAdmin) {
+                html += `
+                <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-amber-200 mb-6 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
+                    <h3 class="font-bold text-gray-800 mb-3 flex items-center"><i class="fas fa-plus-circle text-amber-500 mr-2"></i> 새 할일 등록</h3>
+                    <div class="flex flex-col md:flex-row gap-2">
+                        <input type="text" id="new-todo-title" placeholder="할일 내용 (예: 교육과정 계획안 제출)" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                        <div class="flex gap-2">
+                            <input type="text" id="new-todo-assignee" placeholder="담당자 (선택)" class="w-full md:w-32 border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500">
+                            <input type="date" id="new-todo-date" class="w-full md:w-40 border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 text-gray-600">
+                        </div>
+                        <button onclick="window.addTodoItem()" id="add-todo-btn" class="bg-amber-500 text-white font-bold px-6 py-2 rounded-lg shadow-sm hover:bg-amber-600 transition whitespace-nowrap">추가하기</button>
+                    </div>
+                </div>`;
+            }
+            
+            const active = (cat.todos||[]).filter(t => !t.completed).sort((a, b) => {
+                if (!a.date && !b.date) return (a.timestamp || 0) - (b.timestamp || 0);
+                if (!a.date) return 1;
+                if (!b.date) return -1;
+                return new Date(a.date) - new Date(b.date);
+            });
+            const completed = (cat.todos||[]).filter(t => t.completed).sort((a, b) => {
+                return (b.timestamp || 0) - (a.timestamp || 0);
+            });
+            
+            html += `<div class="space-y-6">`;
+            
+            // 미완료 목록
+            html += `
+                <div>
+                    <h4 class="font-bold text-gray-700 mb-3 flex items-center"><i class="fas fa-running text-blue-500 mr-2"></i> 진행 중인 할 일 <span class="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-xs ml-2">${active.length}</span></h4>
+                    <div class="space-y-2">
+            `;
+            if(active.length === 0) html += `<div class="p-6 text-center text-gray-400 bg-white rounded-lg border border-dashed border-gray-300"><i class="fas fa-glass-cheers text-2xl mb-2 block text-gray-300"></i>진행 중인 할 일이 없습니다.</div>`;
+            active.forEach(t => {
+                 html += `
+                 <div class="flex flex-wrap md:flex-nowrap items-center gap-2 p-3 md:p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-blue-300 transition-colors group/titem">
+                    <input type="checkbox" onchange="window.toggleTodoInModal('${t.id}', true)" class="w-5 h-5 text-amber-500 rounded border-gray-300 focus:ring-amber-500 cursor-pointer flex-shrink-0">
+                    <span class="font-medium text-gray-800 flex-1 min-w-0 break-words">${t.title}</span>
+                    <div class="flex items-center gap-2 ml-auto md:ml-4 flex-shrink-0">
+                        ${t.assignee ? `<span class="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-md font-medium border border-gray-200">@${t.assignee}</span>` : ''}
+                        ${t.date ? `<span class="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-md border border-gray-200"><i class="far fa-calendar-alt mr-1"></i>${t.date}</span>` : ''}
+                        ${isAdmin ? `<button onclick="window.deleteTodo('${t.id}')" class="text-gray-300 hover:text-red-500 ml-1 p-1 transition-colors"><i class="fas fa-trash"></i></button>` : ''}
+                    </div>
+                 </div>`;
+            });
+            html += `</div></div>`;
+            
+            // 완료 목록
+            html += `
+                <div>
+                    <h4 class="font-bold text-gray-500 mb-3 flex items-center"><i class="fas fa-check-circle text-gray-400 mr-2"></i> 완료된 할 일 <span class="bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full text-xs ml-2">${completed.length}</span></h4>
+                    <div class="space-y-2">
+            `;
+            if(completed.length === 0) html += `<div class="p-6 text-center text-gray-400 bg-gray-50 rounded-lg border border-dashed border-gray-300">완료된 항목이 없습니다.</div>`;
+            completed.forEach(t => {
+                 html += `
+                 <div class="flex flex-wrap md:flex-nowrap items-center gap-2 p-3 md:p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm opacity-60 hover:opacity-100 transition-opacity group/titem">
+                    <input type="checkbox" checked onchange="window.toggleTodoInModal('${t.id}', false)" class="w-5 h-5 text-gray-400 rounded border-gray-300 cursor-pointer flex-shrink-0">
+                    <span class="font-medium text-gray-500 line-through flex-1 min-w-0 break-words">${t.title}</span>
+                    <div class="flex items-center gap-2 ml-auto md:ml-4 flex-shrink-0">
+                        ${t.assignee ? `<span class="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-md">@${t.assignee}</span>` : ''}
+                        ${t.date ? `<span class="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded-md"><i class="far fa-calendar-alt mr-1"></i>${t.date}</span>` : ''}
+                        ${isAdmin ? `<button onclick="window.deleteTodo('${t.id}')" class="text-gray-300 hover:text-red-500 ml-1 p-1 transition-colors"><i class="fas fa-trash"></i></button>` : ''}
+                    </div>
+                 </div>`;
+            });
+            html += `</div></div></div>`;
+            
+            area.innerHTML = html;
+        };
+
+        window.addTodoItem = async function() {
+            const title = document.getElementById('new-todo-title').value.trim();
+            const date = document.getElementById('new-todo-date').value;
+            const assignee = document.getElementById('new-todo-assignee').value.trim();
+            if (!title) return window.showToast('할일 내용을 입력하세요.', 'error');
+            
+            const cat = window.appState.categories.find(c => c.id === window.todoState.currentCatId);
+            if(!cat.todos) cat.todos = [];
+            cat.todos.push({ id: generateId(), title, date, assignee, completed: false, timestamp: Date.now() });
+            
+            const btn = document.getElementById('add-todo-btn');
+            try {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; btn.disabled = true;
+                await setDoc(settingsRef, window.appState);
+                window.showToast('할일이 등록되었습니다.', 'success');
+                window.renderTodoList();
+            } catch (e) {
+                window.showToast('권한이 없어 추가할 수 없습니다.', 'error');
+                cat.todos.pop();
+            } finally {
+                btn.innerHTML = '추가하기'; btn.disabled = false;
+            }
+        };
+
+        window.deleteTodo = async function(todoId) {
+            window.openConfirm('할일 삭제', '이 할일을 완전히 삭제하시겠습니까?', async () => {
+                const cat = window.appState.categories.find(c => c.id === window.todoState.currentCatId);
+                const origTodos = [...cat.todos];
+                cat.todos = cat.todos.filter(t => t.id !== todoId);
+                try {
+                    await setDoc(settingsRef, window.appState);
+                    window.renderTodoList();
+                } catch(e) {
+                    cat.todos = origTodos;
+                    window.showToast('권한이 없어 삭제할 수 없습니다.', 'error');
+                }
+            });
+        };
+
+        window.toggleTodoInModal = async function(todoId, isCompleted) {
+            const cat = window.appState.categories.find(c => c.id === window.todoState.currentCatId);
+            const todo = cat.todos.find(t => t.id === todoId);
+            if(!todo) return;
+            const origCompleted = todo.completed;
+            todo.completed = isCompleted;
+            try {
+                await setDoc(settingsRef, window.appState);
+                window.renderTodoList();
+            } catch(e) {
+                todo.completed = origCompleted;
+                window.showToast('상태 변경 실패: 권한을 확인하세요.', 'error');
+                window.renderTodoList(); 
+            }
+        };
+
+        window.checkTodoMain = function(event, catId, todoId) {
+            const checkbox = event.target;
+            const container = document.getElementById(`main-todo-${todoId}`);
+            if (checkbox.checked) {
+                // 시각적 피드백 먼저 적용 (회색 및 취소선)
+                container.classList.add('opacity-40', 'bg-gray-100');
+                container.classList.remove('bg-white');
+                container.querySelector('span.font-medium').classList.add('line-through', 'text-gray-400');
+                container.querySelector('span.font-medium').classList.remove('text-gray-700');
+                
+                setTimeout(async () => {
+                    const cat = window.appState.categories.find(c => c.id === catId);
+                    const todo = cat.todos.find(t => t.id === todoId);
+                    if (todo) {
+                        todo.completed = true;
+                        try {
+                            await setDoc(settingsRef, window.appState);
+                            // 성공 시 onSnapshot이 작동하여 완전히 목록에서 사라짐
+                        } catch (e) {
+                            window.showToast("권한 오류: 완료 처리할 수 없습니다.", "error");
+                            checkbox.checked = false;
+                            todo.completed = false;
+                            // 시각적 피드백 롤백
+                            container.classList.remove('opacity-40', 'bg-gray-100');
+                            container.classList.add('bg-white');
+                            container.querySelector('span.font-medium').classList.remove('line-through', 'text-gray-400');
+                            container.querySelector('span.font-medium').classList.add('text-gray-700');
+                        }
+                    }
+                }, 600); // 0.6초 대기 후 반영
+            }
+        };
+
         // 관리자 제어
         window.handleGearClick = () => { if (auth.currentUser && !auth.currentUser.isAnonymous) window.openSettings(); else document.getElementById('login-modal').classList.remove('hidden'); };
         window.loginAdmin = async () => {
@@ -925,7 +1161,15 @@
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; btn.disabled = true;
                 await signInWithEmailAndPassword(auth, email, pw);
                 document.getElementById('login-modal').classList.add('hidden'); document.getElementById('admin-pw').value = '';
-                window.showToast("로그인되었습니다.", "success"); window.openSettings();
+                window.showToast("로그인되었습니다.", "success"); 
+                
+                if (!document.getElementById('board-modal').classList.contains('hidden')) {
+                    window.renderBoardList(window.boardState.currentPage, window.boardState.searchQuery);
+                } else if (!document.getElementById('todo-modal').classList.contains('hidden')) {
+                    window.renderTodoList();
+                } else {
+                    window.openSettings();
+                }
             } catch (e) { window.showToast("로그인 실패.", "error"); } 
             finally { btn.innerHTML = '로그인'; btn.disabled = false; }
         };
@@ -1015,16 +1259,25 @@
                         </button>
                     </div>
                     ${window.isQuickReorderMode ? '<p class="text-[11px] md:text-xs text-amber-700 mb-3 bg-amber-100/80 p-2 rounded border border-amber-200"><i class="fas fa-info-circle mr-1"></i>버튼을 길게 누른 채 끌어서 순서를 변경한 뒤, 우측 상단의 <b>[순서 저장]</b>을 누르세요.</p>' : ''}
-                    <div id="quick-link-container" class="flex flex-wrap gap-2 ${window.isQuickReorderMode ? 'p-3 bg-amber-100/50 rounded-lg border border-dashed border-amber-400 min-h-[60px]' : ''}">
-                        ${window.draftState.categories.map((c, i) => `
-                            <div class="quick-link-item touch-none">
-                                <button ${window.isQuickReorderMode ? '' : `onclick="window.scrollToCat('${c.id}')"`} 
-                                        class="px-3 py-2 ${window.isQuickReorderMode ? 'bg-amber-50 border border-amber-400 ring-2 ring-amber-300 cursor-move opacity-90' : 'bg-white border border-amber-300 hover:bg-amber-100 hover:text-amber-700'} rounded-lg text-xs md:text-sm font-bold text-amber-900 transition-colors shadow-sm flex items-center select-none">
-                                    ${window.isQuickReorderMode ? '<i class="fas fa-grip-vertical mr-2 text-amber-500"></i>' : ''}
-                                    <i class="fas ${c.icon} mr-1.5 text-amber-500"></i> ${c.title || `메인메뉴 ${i+1}`}
-                                </button>
-                            </div>
-                        `).join('')}
+                    <div id="quick-link-container" class="flex flex-wrap items-center gap-2 ${window.isQuickReorderMode ? 'p-3 bg-amber-100/50 rounded-lg border border-dashed border-amber-400 min-h-[60px]' : ''}">
+                        ${window.draftState.categories.map((c, i) => {
+                            let btnHtml = `
+                                <div class="quick-link-item touch-none">
+                                    <button ${window.isQuickReorderMode ? '' : `onclick="window.scrollToCat('${c.id}')"`} 
+                                            class="px-3 py-2 ${window.isQuickReorderMode ? 'bg-amber-50 border border-amber-400 ring-2 ring-amber-300 cursor-move opacity-90' : 'bg-white border border-amber-300 hover:bg-amber-100 hover:text-amber-700'} rounded-lg text-xs md:text-sm font-bold text-amber-900 transition-colors shadow-sm flex items-center select-none">
+                                        ${window.isQuickReorderMode ? '<i class="fas fa-grip-vertical mr-2 text-amber-500"></i>' : ''}
+                                        <i class="fas ${c.icon} mr-1.5 text-amber-500"></i> ${c.title || `메인메뉴 ${i+1}`}
+                                    </button>
+                                </div>
+                            `;
+                            
+                            // 열 개수 단위로 슬래시(/) 구분자 추가 (순서 변경 모드가 아닐 때, 그리고 마지막 항목이 아닐 때)
+                            if (!window.isQuickReorderMode && (i + 1) % window.draftState.columns === 0 && i !== window.draftState.categories.length - 1) {
+                                btnHtml += `<span class="text-amber-300 font-bold mx-1 select-none text-lg">/</span>`;
+                            }
+                            
+                            return btnHtml;
+                        }).join('')}
                     </div>
                 </div>
 
@@ -1034,6 +1287,7 @@
             window.draftState.categories.forEach((cat, cIdx) => {
                 const isHidden = cIdx >= (window.draftState.columns * window.draftState.rows);
                 const isBoard = cat.type === 'board';
+                const isTodo = cat.type === 'todo'; // 할일 게시판 판별
                 const isCollapsed = window.collapsedSettings.has(cat.id);
                 
                 html += `
@@ -1054,8 +1308,9 @@
                                 <div class="ml-2 flex items-center ${isCollapsed ? 'hidden md:flex' : ''}">
                                     <label class="text-xs font-bold text-gray-500 mr-2 border-l border-gray-300 pl-3">유형:</label>
                                     <select onchange="window.updateCat('${cat.id}', 'type', this.value)" class="px-2 py-1 bg-white border border-gray-300 rounded text-xs font-bold text-blue-700 outline-none shadow-sm cursor-pointer">
-                                        <option value="menu" ${!isBoard ? 'selected' : ''}>기본 메뉴 (하위 폴더/링크)</option>
-                                        <option value="board" ${isBoard ? 'selected' : ''}>게시판 모드 (공지사항)</option>
+                                        <option value="menu" ${!isBoard && !isTodo ? 'selected' : ''}>기본 메뉴 (하위 폴더/링크)</option>
+                                        <option value="board" ${isBoard ? 'selected' : ''}>공지 게시판 (리스트)</option>
+                                        <option value="todo" ${isTodo ? 'selected' : ''}>할일 게시판 (체크리스트)</option>
                                     </select>
                                 </div>
                             </div>
@@ -1068,19 +1323,25 @@
                         
                         <div class="${isCollapsed ? 'hidden' : 'block'}">
                             <div class="grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-4 mb-5 w-full bg-white p-3 md:p-4 rounded-lg border border-blue-100 shadow-sm">
-                                <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">${isBoard ? '게시판 명' : '메뉴명'}</label><input type="text" value="${cat.title}" onchange="window.updateCat('${cat.id}', 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none"></div>
+                                <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">${isBoard ? '게시판 명' : (isTodo ? '할일 보드명' : '메뉴명')}</label><input type="text" value="${cat.title}" onchange="window.updateCat('${cat.id}', 'title', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none"></div>
                                 <div class="w-full md:col-span-3"><label class="block text-xs font-semibold text-gray-500 mb-1">설명</label><input type="text" value="${cat.subtitle}" onchange="window.updateCat('${cat.id}', 'subtitle', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none"></div>
                                 <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">아이콘</label>${renderIconDropdown(cat.icon, `window.updateCat('${cat.id}', 'icon', this.value)`)}</div>
                                 <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">테마 색상</label><select onchange="window.updateCat('${cat.id}', 'color', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-100 outline-none">${Object.keys(palette).map(c => `<option value="${c}" ${cat.color === c ? 'selected' : ''}>${colorNames[c]||c}</option>`).join('')}</select></div>
                                 <div class="w-full md:col-span-1"><label class="block text-xs font-semibold text-red-500 mb-1"><i class="fas fa-lock text-xs mr-1"></i>접근 암호</label><input type="text" value="${cat.password||''}" onchange="window.updateCat('${cat.id}', 'password', this.value)" placeholder="빈칸:없음" class="w-full px-3 py-2 border rounded-lg text-sm border-red-200 focus:ring-2 focus:ring-red-100 outline-none bg-red-50/20"></div>
-                                ${!isBoard ? `<div class="w-full md:col-span-5"><label class="block text-xs font-semibold text-blue-500 mb-1"><i class="fas fa-external-link-alt text-xs mr-1"></i>단독 링크</label><input type="text" value="${cat.link||''}" onchange="window.updateCat('${cat.id}', 'link', this.value)" placeholder="이동할 URL 입력 (입력 시 하위 목록 미표시)" class="w-full px-3 py-2 border rounded-lg text-sm border-blue-200 focus:ring-2 focus:ring-blue-100 outline-none"></div>` : ''}
+                                ${!isBoard && !isTodo ? `<div class="w-full md:col-span-5"><label class="block text-xs font-semibold text-blue-500 mb-1"><i class="fas fa-external-link-alt text-xs mr-1"></i>단독 링크</label><input type="text" value="${cat.link||''}" onchange="window.updateCat('${cat.id}', 'link', this.value)" placeholder="이동할 URL 입력 (입력 시 하위 목록 미표시)" class="w-full px-3 py-2 border rounded-lg text-sm border-blue-200 focus:ring-2 focus:ring-blue-100 outline-none"></div>` : ''}
                             </div>
                             
                             ${isBoard ? `
                                 <div class="bg-teal-50 text-teal-700 text-sm p-4 rounded-lg text-center border border-teal-200 font-bold w-full break-keep shadow-inner">
                                     <i class="fas fa-clipboard-list mr-1 text-lg mb-2 block"></i> 
-                                    이 메뉴는 <strong class="underline decoration-teal-300 underline-offset-4">게시판</strong>으로 설정되었습니다.<br>
+                                    이 메뉴는 <strong class="underline decoration-teal-300 underline-offset-4">공지 게시판</strong>으로 설정되었습니다.<br>
                                     <span class="text-xs font-normal text-teal-600 mt-2 block">메인 화면에서 클릭 시 공지사항 형태의 게시판이 팝업으로 열립니다.<br>단독 링크 및 하위 메뉴(폴더) 설정은 비활성화됩니다.</span>
+                                </div>
+                            ` : isTodo ? `
+                                <div class="bg-amber-50 text-amber-700 text-sm p-4 rounded-lg text-center border border-amber-200 font-bold w-full break-keep shadow-inner">
+                                    <i class="fas fa-check-square mr-1 text-lg mb-2 block"></i> 
+                                    이 메뉴는 <strong class="underline decoration-amber-300 underline-offset-4">할일(To-do) 게시판</strong>으로 설정되었습니다.<br>
+                                    <span class="text-xs font-normal text-amber-600 mt-2 block">메인 화면에 미완료된 할 일 목록이 바로 표시되며, 체크 시 완료 처리되어 사라집니다.<br>단독 링크 및 하위 메뉴(폴더) 설정은 비활성화됩니다.</span>
                                 </div>
                             ` : (cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#') ? `
                                 <div class="bg-indigo-50 text-indigo-600 text-xs md:text-sm p-3 md:p-4 rounded-lg text-center border border-indigo-200 font-medium w-full break-keep shadow-inner">
@@ -1188,7 +1449,7 @@
         window.updateCat = (id, field, value) => { const cat = window.draftState.categories.find(c => c.id === id); if(cat) { cat[field] = value; if(field === 'color' || field === 'type' || field === 'link') window.renderSettingsBody(); } };
         window.addDraftCategory = () => { 
             const newId = generateId();
-            window.draftState.categories.push({ id: newId, type: 'menu', title: '새 메뉴', subtitle: '', icon: 'fa-folder', color: 'blue', password: '', link: '', groups: [], posts: [] }); 
+            window.draftState.categories.push({ id: newId, type: 'menu', title: '새 메뉴', subtitle: '', icon: 'fa-folder', color: 'blue', password: '', link: '', groups: [], posts: [], todos: [] }); 
             window.collapsedSettings.delete(newId); // 새 항목은 펼친 상태로 시작
             window.renderSettingsBody(); 
             setTimeout(() => document.getElementById('setting-cat-' + newId)?.scrollIntoView({behavior: 'smooth', block: 'center'}), 50); 
