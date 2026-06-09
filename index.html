@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -35,6 +34,7 @@
         .slide-content > * { overflow: hidden; }
         .slide-content.open { grid-template-rows: 1fr; opacity: 1; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
         #toast { transition: opacity 0.3s, transform 0.3s; transform: translateY(100%); opacity: 0; pointer-events: none; }
         #toast.show { transform: translateY(0); opacity: 1; }
@@ -49,6 +49,10 @@
     <div class="bg-nature-wrap">
         <div class="bg-mountain-left"><svg viewBox="0 0 400 320" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.7;"><ellipse cx="60" cy="0" rx="200" ry="120" fill="url(#cloudL1)"/><path d="M0 320 L0 140 Q30 80 80 100 Q130 50 180 90 Q220 40 270 80 Q310 60 350 100 Q380 130 400 160 L400 320Z" fill="url(#mountainL1)"/><path d="M0 320 L0 180 Q40 130 100 160 Q150 110 200 140 Q250 100 300 140 L350 320Z" fill="url(#mountainL2)"/><path d="M0 320 L0 220 Q50 180 120 210 Q180 170 250 200 L300 320Z" fill="url(#mountainL3)"/><defs><linearGradient id="cloudL1" x1="0" y1="0" x2="200" y2="120"><stop offset="0%" stop-color="#b8dce8" stop-opacity="0.4"/><stop offset="100%" stop-color="#d4eef5" stop-opacity="0.1"/></linearGradient><linearGradient id="mountainL1" x1="100" y1="40" x2="100" y2="320"><stop offset="0%" stop-color="#8cc5a8" stop-opacity="0.35"/><stop offset="100%" stop-color="#b5dcc5" stop-opacity="0.1"/></linearGradient><linearGradient id="mountainL2" x1="80" y1="100" x2="80" y2="320"><stop offset="0%" stop-color="#a3d4b7" stop-opacity="0.3"/><stop offset="100%" stop-color="#c8e6d2" stop-opacity="0.08"/></linearGradient><linearGradient id="mountainL3" x1="60" y1="170" x2="60" y2="320"><stop offset="0%" stop-color="#bce0cb" stop-opacity="0.25"/><stop offset="100%" stop-color="#ddf0e3" stop-opacity="0.05"/></linearGradient></defs></svg></div>
         <div class="bg-mountain-right"><svg viewBox="0 0 350 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.6;"><ellipse cx="300" cy="0" rx="180" ry="100" fill="url(#cloudR1)"/><path d="M0 160 Q40 80 100 110 Q150 50 200 80 Q250 30 300 70 Q330 50 350 80 L350 300 L0 300Z" fill="url(#mountainR1)"/><path d="M50 300 Q80 140 150 170 Q200 120 260 150 Q310 110 350 140 L350 300Z" fill="url(#mountainR2)"/><path d="M100 300 Q140 200 200 220 Q260 180 320 210 L350 300Z" fill="url(#mountainR3)"/><defs><linearGradient id="cloudR1" x1="200" y1="0" x2="350" y2="100"><stop offset="0%" stop-color="#a8d1e0" stop-opacity="0.3"/><stop offset="100%" stop-color="#c8e4ef" stop-opacity="0.08"/></linearGradient><linearGradient id="mountainR1" x1="200" y1="30" x2="200" y2="300"><stop offset="0%" stop-color="#7fbfdb" stop-opacity="0.3"/><stop offset="100%" stop-color="#b5d8e8" stop-opacity="0.08"/></linearGradient><linearGradient id="mountainR2" x1="200" y1="110" x2="200" y2="300"><stop offset="0%" stop-color="#95cada" stop-opacity="0.25"/><stop offset="100%" stop-color="#c5e2ed" stop-opacity="0.05"/></linearGradient><linearGradient id="mountainR3" x1="220" y1="180" x2="220" y2="300"><stop offset="0%" stop-color="#a8d5e2" stop-opacity="0.2"/><stop offset="100%" stop-color="#d5ebf2" stop-opacity="0.03"/></linearGradient></defs></svg></div>
+        <div class="bg-mid-left"><svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.5;"><path d="M0 0 Q20 40 10 80 Q30 60 50 90 Q40 120 20 140 Q35 130 60 150 Q30 180 0 200 L0 0Z" fill="url(#midL1)"/><ellipse cx="0" cy="100" rx="80" ry="60" fill="url(#midL2)"/><ellipse cx="10" cy="160" rx="60" ry="40" fill="url(#midL3)"/><defs><linearGradient id="midL1" x1="0" y1="0" x2="60" y2="200"><stop offset="0%" stop-color="#8cc5a8" stop-opacity="0.4"/><stop offset="100%" stop-color="#b5dcc5" stop-opacity="0.1"/></linearGradient><radialGradient id="midL2" cx="0" cy="0.5" r="1"><stop offset="0%" stop-color="#a3d4b7" stop-opacity="0.25"/><stop offset="100%" stop-color="#c8e6d2" stop-opacity="0"/></radialGradient><radialGradient id="midL3" cx="0.1" cy="0.5" r="1"><stop offset="0%" stop-color="#90c8ae" stop-opacity="0.2"/><stop offset="100%" stop-color="#c5e3d0" stop-opacity="0"/></radialGradient></defs></svg></div>
+        <div class="bg-mid-right"><svg viewBox="0 0 180 220" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.45;"><path d="M180 20 Q160 50 170 90 Q150 70 130 100 Q145 130 165 150 Q140 140 120 160 Q150 190 180 210 L180 20Z" fill="url(#midR1)"/><ellipse cx="180" cy="110" rx="70" ry="55" fill="url(#midR2)"/><defs><linearGradient id="midR1" x1="180" y1="20" x2="120" y2="210"><stop offset="0%" stop-color="#7fbfdb" stop-opacity="0.35"/><stop offset="100%" stop-color="#b5d8e8" stop-opacity="0.08"/></linearGradient><radialGradient id="midR2" cx="1" cy="0.5" r="1"><stop offset="0%" stop-color="#95cada" stop-opacity="0.2"/><stop offset="100%" stop-color="#c5e2ed" stop-opacity="0"/></radialGradient></defs></svg></div>
+        <div class="bg-bottom-left"><svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.55;"><ellipse cx="50" cy="300" rx="180" ry="100" fill="url(#blCloud1)"/><path d="M0 120 Q40 160 30 200 Q60 170 90 190 Q120 150 160 180 Q190 140 230 170 Q200 220 160 250 Q100 280 0 300 L0 120Z" fill="url(#blMtn1)"/><path d="M0 180 Q50 200 40 240 Q80 210 120 230 Q100 260 60 280 L0 300 L0 180Z" fill="url(#blMtn2)"/><ellipse cx="200" cy="280" rx="120" ry="40" fill="url(#blGrass)"/><defs><radialGradient id="blCloud1" cx="0.2" cy="1" r="1"><stop offset="0%" stop-color="#b8dce8" stop-opacity="0.25"/><stop offset="100%" stop-color="#d4eef5" stop-opacity="0"/></radialGradient><linearGradient id="blMtn1" x1="0" y1="120" x2="100" y2="300"><stop offset="0%" stop-color="#8cc5a8" stop-opacity="0.35"/><stop offset="100%" stop-color="#bce0cb" stop-opacity="0.1"/></linearGradient><linearGradient id="blMtn2" x1="0" y1="180" x2="60" y2="300"><stop offset="0%" stop-color="#a3d4b7" stop-opacity="0.3"/><stop offset="100%" stop-color="#d0ebd8" stop-opacity="0.05"/></linearGradient><radialGradient id="blGrass" cx="0.5" cy="0.8" r="0.8"><stop offset="0%" stop-color="#a8d5b8" stop-opacity="0.2"/><stop offset="100%" stop-color="#c8e6d2" stop-opacity="0"/></radialGradient></defs></svg></div>
+        <div class="bg-bottom-right"><svg viewBox="0 0 380 280" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;opacity:0.5;"><ellipse cx="330" cy="280" rx="160" ry="90" fill="url(#brCloud1)"/><path d="M380 100 Q340 140 350 180 Q310 150 270 170 Q240 140 200 160 Q230 200 270 230 Q320 260 380 280 L380 100Z" fill="url(#brMtn1)"/><path d="M380 170 Q340 190 350 230 Q310 210 270 230 Q300 260 340 270 L380 280 L380 170Z" fill="url(#brMtn2)"/><defs><radialGradient id="brCloud1" cx="0.85" cy="1" r="1"><stop offset="0%" stop-color="#a8d1e0" stop-opacity="0.22"/><stop offset="100%" stop-color="#c8e4ef" stop-opacity="0"/></radialGradient><linearGradient id="brMtn1" x1="380" y1="100" x2="280" y2="280"><stop offset="0%" stop-color="#7fbfdb" stop-opacity="0.3"/><stop offset="100%" stop-color="#b5d8e8" stop-opacity="0.08"/></linearGradient><linearGradient id="brMtn2" x1="380" y1="170" x2="300" y2="280"><stop offset="0%" stop-color="#95cada" stop-opacity="0.25"/><stop offset="100%" stop-color="#c5e2ed" stop-opacity="0.05"/></linearGradient></defs></svg></div>
     </div>
     
     <div class="school-illustration">
@@ -121,10 +125,10 @@
         <div class="min-h-screen flex items-start justify-center">
             <div class="w-full max-w-5xl bg-white shadow-2xl rounded-2xl relative flex flex-col max-h-[90vh]">
                 <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50 rounded-t-2xl flex-shrink-0">
-                    <h3 class="text-lg font-bold text-gray-900"><i class="fas fa-tools mr-2 text-gray-500"></i> 메뉴 및 화면 설정</h3>
+                    <h3 class="text-lg font-bold text-gray-900"><i class="fas fa-tools mr-2 text-gray-500"></i> 메뉴 및 화면 설정 (관리자)</h3>
                     <button onclick="window.closeSettings()" class="text-gray-400 hover:text-gray-700 bg-white border rounded-lg p-2 leading-none"><i class="fas fa-times"></i></button>
                 </div>
-                <div class="p-4 md:p-6 bg-gray-100 overflow-y-auto flex-1 custom-scrollbar w-full" id="settings-body"></div>
+                <div class="p-6 bg-gray-100 overflow-y-auto flex-1 custom-scrollbar w-full" id="settings-body"></div>
                 <div class="px-6 py-4 bg-gray-50 border-t rounded-b-2xl flex justify-between items-center flex-shrink-0">
                     <button onclick="window.logoutAdmin()" class="px-4 py-2 text-red-500 font-medium hover:bg-red-50 rounded-lg transition-colors text-sm"><i class="fas fa-sign-out-alt mr-1"></i> 로그아웃</button>
                     <div class="flex gap-2">
@@ -134,6 +138,21 @@
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 커스텀 삭제 확인 모달 -->
+    <div id="confirm-modal" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all">
+            <div class="p-6 text-center">
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 text-xl"><i class="fas fa-exclamation-triangle"></i></div>
+                <h3 id="confirm-title" class="text-xl font-bold text-gray-800 mb-2">정말 삭제하시겠습니까?</h3>
+                <p id="confirm-message" class="text-sm text-gray-500">이 작업은 되돌릴 수 없습니다.</p>
+            </div>
+            <div class="flex border-t border-gray-100 bg-gray-50">
+                <button onclick="window.closeConfirm()" class="flex-1 p-4 text-gray-600 hover:bg-gray-100 font-medium transition-colors">취소</button>
+                <button id="confirm-ok-btn" class="flex-1 p-4 text-red-500 border-l border-gray-100 hover:bg-red-50 font-bold transition-colors">삭제</button>
             </div>
         </div>
     </div>
@@ -235,6 +254,8 @@
             if (!/^https?:\/\//i.test(formatted)) formatted = 'http://' + formatted;
             return formatted;
         };
+
+        const generateId = () => 'id_' + Date.now().toString(36) + Math.random().toString(36).substring(2);
 
         window.appState = null; window.draftState = null;
         window.unlockedEntities = new Set(); window.currentPendingTarget = null;
@@ -435,6 +456,23 @@
             if (arrow) arrow.classList.toggle('rotate-180');
         };
 
+        // 삭제 전용 커스텀 모달
+        window.pendingConfirmAction = null;
+        window.openConfirm = (title, message, action) => {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-message').innerText = message;
+            window.pendingConfirmAction = action;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        };
+        window.closeConfirm = () => {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            window.pendingConfirmAction = null;
+        };
+        document.getElementById('confirm-ok-btn').addEventListener('click', () => {
+            if(window.pendingConfirmAction) window.pendingConfirmAction();
+            window.closeConfirm();
+        });
+
         // 관리자 제어
         window.handleGearClick = () => { if (auth.currentUser && !auth.currentUser.isAnonymous) window.openSettings(); else document.getElementById('login-modal').classList.remove('hidden'); };
         window.loginAdmin = async () => {
@@ -517,12 +555,12 @@
                             <div class="w-full md:col-span-3"><label class="block text-xs font-semibold text-gray-500 mb-1">설명</label><input type="text" value="${cat.subtitle}" onchange="window.updateCat('${cat.id}', 'subtitle', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm"></div>
                             <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">아이콘</label>${renderIconDropdown(cat.icon, `window.updateCat('${cat.id}', 'icon', this.value)`)}</div>
                             <div class="w-full md:col-span-2"><label class="block text-xs font-semibold text-gray-500 mb-1">테마 색상</label><select onchange="window.updateCat('${cat.id}', 'color', this.value)" class="w-full px-3 py-2 border rounded-lg text-sm">${Object.keys(palette).map(c => `<option value="${c}" ${cat.color === c ? 'selected' : ''}>${colorNames[c]||c}</option>`).join('')}</select></div>
-                            <div class="w-full md:col-span-1"><label class="block text-xs font-semibold text-red-500 mb-1"><i class="fas fa-lock text-xs mr-1"></i>암호</label><input type="text" value="${cat.password||''}" onchange="window.updateCat('${cat.id}', 'password', this.value)" placeholder="없음" class="w-full px-3 py-2 border rounded-lg text-sm border-red-200"></div>
+                            <div class="w-full md:col-span-1"><label class="block text-xs font-semibold text-red-500 mb-1"><i class="fas fa-lock text-xs mr-1"></i>암호</label><input type="text" value="${cat.password||''}" onchange="window.updateCat('${cat.id}', 'password', this.value)" placeholder="빈칸:없음" class="w-full px-3 py-2 border rounded-lg text-sm border-red-200"></div>
                             <div class="w-full md:col-span-5"><label class="block text-xs font-semibold text-blue-500 mb-1"><i class="fas fa-external-link-alt text-xs mr-1"></i>단독 링크</label><input type="text" value="${cat.link||''}" onchange="window.updateCat('${cat.id}', 'link', this.value)" placeholder="이동할 URL 입력 (입력 시 하위 목록 미표시)" class="w-full px-3 py-2 border rounded-lg text-sm border-blue-200"></div>
                         </div>
                         
                         ${(cat.link && cat.link.trim() !== '' && cat.link.trim() !== '#') ? `
-                            <div class="bg-blue-50 text-blue-600 text-xs md:text-sm p-3 md:p-4 rounded-lg text-center border border-blue-200 font-medium w-full">
+                            <div class="bg-blue-50 text-blue-600 text-xs md:text-sm p-3 md:p-4 rounded-lg text-center border border-blue-200 font-medium w-full break-keep">
                                 <i class="fas fa-link mr-1"></i> 단독 링크 설정됨 (하위메뉴 숨김 처리)
                             </div>
                         ` : `
@@ -553,7 +591,7 @@
 
                                         ${(group.link && group.link.trim() !== '' && group.link.trim() !== '#') ? `
                                             <div class="bg-blue-50 text-blue-600 text-[10px] md:text-xs p-2 rounded text-center border border-blue-200 font-medium mt-2 w-full">
-                                                <i class="fas fa-link mr-1"></i> 단독 링크 작동
+                                                <i class="fas fa-link mr-1"></i> 단독 링크 작동 (하위 링크 미표시)
                                             </div>
                                         ` : `
                                         <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 w-full">
@@ -569,12 +607,15 @@
                                                             <div class="flex gap-1">
                                                                 <button onclick="window.moveDraftItemUp('${cat.id}', ${gIdx}, ${iIdx})" class="w-6 h-6 border bg-gray-50 rounded flex items-center justify-center text-gray-500 disabled:opacity-30" ${iIdx===0?'disabled':''}><i class="fas fa-arrow-up text-[10px]"></i></button>
                                                                 <button onclick="window.moveDraftItemDown('${cat.id}', ${gIdx}, ${iIdx})" class="w-6 h-6 border bg-gray-50 rounded flex items-center justify-center text-gray-500 disabled:opacity-30" ${iIdx===group.items.length-1?'disabled':''}><i class="fas fa-arrow-down text-[10px]"></i></button>
-                                                                <button onclick="window.removeDraftItem('${cat.id}', ${gIdx}, ${iIdx})" class="w-6 h-6 border bg-red-50 border-red-100 rounded flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white"><i class="fas fa-times text-[10px]"></i></button>
+                                                                <button onclick="window.removeDraftItem('${cat.id}', ${gIdx}, ${iIdx})" class="w-6 h-6 border bg-red-50 border-red-100 rounded flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white md:hidden ml-auto"><i class="fas fa-times text-[10px]"></i></button>
                                                             </div>
                                                         </div>
-                                                        <div class="w-full"><input type="text" value="${item.title}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'title', this.value)" placeholder="자료명" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm outline-none"></div>
-                                                        <div class="w-full"><input type="text" value="${item.link}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'link', this.value)" placeholder="URL" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm outline-none"></div>
-                                                        <div class="w-full"><input type="text" value="${item.password||''}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'password', this.value)" placeholder="암호 (선택)" class="w-full px-3 py-2 border border-red-200 rounded-lg text-xs md:text-sm outline-none"></div>
+                                                        <div class="w-full flex flex-col md:flex-row items-center gap-2">
+                                                            <div class="flex-1 w-full min-w-0"><input type="text" value="${item.title}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'title', this.value)" placeholder="자료명" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm outline-none"></div>
+                                                            <div class="flex-1 w-full min-w-0"><input type="text" value="${item.link}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'link', this.value)" placeholder="URL" class="w-full px-3 py-2 border rounded-lg text-xs md:text-sm outline-none"></div>
+                                                            <div class="w-full md:w-24 lg:w-28 flex-shrink-0"><input type="text" value="${item.password||''}" onchange="window.updateItem('${cat.id}', ${gIdx}, ${iIdx}, 'password', this.value)" placeholder="암호 (선택)" class="w-full px-3 py-2 border border-red-200 rounded-lg text-xs md:text-sm outline-none"></div>
+                                                            <button onclick="window.removeDraftItem('${cat.id}', ${gIdx}, ${iIdx})" class="text-gray-400 hover:text-red-500 w-6 h-6 hidden md:flex items-center justify-center flex-shrink-0 ml-1"><i class="fas fa-times"></i></button>
+                                                        </div>
                                                     </div>
                                                 `).join('') : '<p class="text-[10px] md:text-xs text-gray-400 text-center py-3 bg-white border border-dashed rounded-lg w-full">등록된 자료가 없습니다.</p>'}
                                             </div>
@@ -594,19 +635,31 @@
 
         window.updateCat = (id, field, value) => { const cat = window.draftState.categories.find(c => c.id === id); if(cat) { cat[field] = value; if(field === 'color' || field === 'link') window.renderSettingsBody(); } };
         window.addDraftCategory = () => { window.draftState.categories.push({ id: generateId(), title: '새 메뉴', subtitle: '', icon: 'fa-folder', color: 'blue', password: '', link: '', groups: [] }); window.renderSettingsBody(); setTimeout(()=>document.getElementById('settings-body').scrollTop=9999,50); };
-        window.removeDraftCategory = (id) => { if(confirm('삭제하시겠습니까?')) { window.draftState.categories = window.draftState.categories.filter(c => c.id !== id); window.renderSettingsBody(); } };
+        window.removeDraftCategory = (id) => { 
+            window.openConfirm('메인메뉴 삭제', '메인메뉴와 포함된 모든 데이터가 삭제됩니다.', () => {
+                window.draftState.categories = window.draftState.categories.filter(c => c.id !== id); window.renderSettingsBody();
+            });
+        };
         window.moveDraftCategoryUp = (id) => { const idx = window.draftState.categories.findIndex(c => c.id === id); if (idx > 0) { const temp = window.draftState.categories[idx - 1]; window.draftState.categories[idx - 1] = window.draftState.categories[idx]; window.draftState.categories[idx] = temp; window.renderSettingsBody(); } };
         window.moveDraftCategoryDown = (id) => { const idx = window.draftState.categories.findIndex(c => c.id === id); if (idx > -1 && idx < window.draftState.categories.length - 1) { const temp = window.draftState.categories[idx + 1]; window.draftState.categories[idx + 1] = window.draftState.categories[idx]; window.draftState.categories[idx] = temp; window.renderSettingsBody(); } };
 
         window.addDraftGroup = (catId) => { const cat = window.draftState.categories.find(c => c.id === catId); if(cat) { cat.groups.push({ id: generateId(), title: '새 그룹', icon: 'fa-folder', color: 'gray', password: '', link: '', items: [] }); window.renderSettingsBody(); } };
         window.updateGroup = (catId, gIdx, field, value) => { const cat = window.draftState.categories.find(c => c.id === catId); if(cat && cat.groups[gIdx]){ cat.groups[gIdx][field] = value; if(field === 'link') window.renderSettingsBody(); }};
-        window.removeDraftGroup = (catId, gIdx) => { if(confirm('삭제하시겠습니까?')) { const cat = window.draftState.categories.find(c => c.id === catId); if(cat) { cat.groups.splice(gIdx, 1); window.renderSettingsBody(); } } };
+        window.removeDraftGroup = (catId, gIdx) => { 
+            window.openConfirm('그룹 삭제', '이 그룹과 포함된 링크 자료가 모두 삭제됩니다.', () => {
+                const cat = window.draftState.categories.find(c => c.id === catId); if(cat) { cat.groups.splice(gIdx, 1); window.renderSettingsBody(); }
+            });
+        };
         window.moveDraftGroupUp = (catId, gIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && gIdx > 0) { const temp = cat.groups[gIdx - 1]; cat.groups[gIdx - 1] = cat.groups[gIdx]; cat.groups[gIdx] = temp; window.renderSettingsBody(); } };
         window.moveDraftGroupDown = (catId, gIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && gIdx < cat.groups.length - 1) { const temp = cat.groups[gIdx + 1]; cat.groups[gIdx + 1] = cat.groups[gIdx]; cat.groups[gIdx] = temp; window.renderSettingsBody(); } };
 
         window.addDraftItem = (catId, gIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if(cat && cat.groups[gIdx]) { cat.groups[gIdx].items.push({ title: '', link: '#', password: '' }); window.renderSettingsBody(); } };
         window.updateItem = (catId, gIdx, iIdx, field, value) => { const cat = window.draftState.categories.find(c => c.id === catId); if(cat && cat.groups[gIdx] && cat.groups[gIdx].items[iIdx]) { cat.groups[gIdx].items[iIdx][field] = value; } };
-        window.removeDraftItem = (catId, gIdx, iIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if(cat && cat.groups[gIdx]) { cat.groups[gIdx].items.splice(iIdx, 1); window.renderSettingsBody(); } };
+        window.removeDraftItem = (catId, gIdx, iIdx) => { 
+            window.openConfirm('링크 삭제', '해당 링크 자료를 삭제하시겠습니까?', () => {
+                const cat = window.draftState.categories.find(c => c.id === catId); if(cat && cat.groups[gIdx]) { cat.groups[gIdx].items.splice(iIdx, 1); window.renderSettingsBody(); }
+            });
+        };
         window.moveDraftItemUp = (catId, gIdx, iIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && cat.groups[gIdx] && iIdx > 0) { const temp = cat.groups[gIdx].items[iIdx - 1]; cat.groups[gIdx].items[iIdx - 1] = cat.groups[gIdx].items[iIdx]; cat.groups[gIdx].items[iIdx] = temp; window.renderSettingsBody(); } };
         window.moveDraftItemDown = (catId, gIdx, iIdx) => { const cat = window.draftState.categories.find(c => c.id === catId); if (cat && cat.groups[gIdx] && iIdx < cat.groups[gIdx].items.length - 1) { const temp = cat.groups[gIdx].items[iIdx + 1]; cat.groups[gIdx].items[iIdx + 1] = cat.groups[gIdx].items[iIdx]; cat.groups[gIdx].items[iIdx] = temp; window.renderSettingsBody(); } };
 
