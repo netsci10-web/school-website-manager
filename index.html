@@ -557,7 +557,7 @@
                 const catActionIcon = hasLink ? 'fa-external-link-alt text-sm' : (hasGroups ? 'fa-chevron-down' : '');
 
                 return `
-                <div id="main-cat-card-${cat.id}" class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200 card-entrance" style="animation-delay: ${index * 60}ms;">
+                <div id="main-cat-card-${cat.id}" onmouseleave="window.closeSection('${cat.id}')" class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200 card-entrance" style="animation-delay: ${index * 60}ms;">
                     <${catTag} ${catHref} ${catClick} class="w-full p-4 md:p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200 rounded-t-xl z-10">
                         <div class="flex items-center min-w-0 flex-1 pr-2">
                             <div class="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 ${colors.bg} rounded-full flex items-center justify-center mr-3 md:mr-4"><i class="fas ${cat.icon} ${colors.text} text-lg md:text-xl"></i></div>
@@ -763,6 +763,14 @@
             const content = document.getElementById(`${id}-content`), arrow = document.getElementById(`${id}-arrow`);
             if (content) content.classList.toggle('open');
             if (arrow) arrow.classList.toggle('rotate-180');
+        };
+
+        window.closeSection = function(id) {
+            const content = document.getElementById(`${id}-content`), arrow = document.getElementById(`${id}-arrow`);
+            if (content && content.classList.contains('open')) {
+                content.classList.remove('open');
+                if (arrow) arrow.classList.remove('rotate-180');
+            }
         };
 
         window.openBoardApp = function(catId) {
