@@ -47,8 +47,8 @@
     </style>
 </head>
 <body class="min-h-screen">
-    <!-- JIT 보완 클래스 세이프리스트 (크기 확장 포함) -->
-    <div class="hidden lg:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 lg:grid-cols-5 lg:grid-cols-6 md:grid-cols-1 md:grid-cols-2 md:grid-cols-3 md:grid-cols-4 lg:col-span-1 lg:col-span-2 lg:col-span-3 lg:col-span-4 lg:col-span-5 lg:col-span-6 md:col-span-1 md:col-span-2 md:col-span-3 text-teal-600 bg-teal-600 hover:bg-teal-700 text-blue-500 text-green-500 text-purple-500 text-orange-500 text-amber-500 text-red-500 text-gray-500"></div>
+    <!-- JIT 보완 클래스 세이프리스트 -->
+    <div class="hidden lg:grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 lg:grid-cols-5 lg:grid-cols-6 md:grid-cols-1 md:grid-cols-2 md:grid-cols-3 md:grid-cols-4 lg:col-span-1 lg:col-span-2 lg:col-span-3 lg:col-span-4 lg:col-span-5 lg:col-span-6 md:col-span-1 md:col-span-2 md:col-span-3 text-teal-600 bg-teal-600 hover:bg-teal-700 text-blue-500 text-green-500 text-purple-500 text-orange-500 text-amber-500 text-red-500 text-gray-500 text-gray-800 bg-white"></div>
 
     <!-- 배경 장식 -->
     <div class="bg-nature-wrap">
@@ -95,8 +95,8 @@
             <h1 id="main-title" onclick="location.reload()" class="text-3xl md:text-4xl font-bold text-gray-800 tracking-tight cursor-pointer hover:text-blue-600 transition-colors inline-block" title="초기화면으로 돌아가기">학교 업무 도움 데스크 매니저</h1>
             <p class="text-gray-500 mt-3 text-lg mb-8">학교 업무에 필요한 자료를 쉽게 찾아보세요!</p>
             
-            <!-- 복구된 메인 페이지 퀵 링크 바 (빠른 이동) -->
-            <div id="main-quick-links" class="max-w-5xl mx-auto hidden mt-4"></div>
+            <!-- 상단 퀵링크 바 (외부 웹페이지 링크) -->
+            <div id="top-quick-link-bar" class="w-full hidden mt-6 mb-4 px-2"></div>
         </div>
     </header>
 
@@ -109,6 +109,9 @@
         
         <!-- 메인 메뉴 그리드 -->
         <div id="main-grid" class="grid gap-6 hidden"></div>
+        
+        <!-- 하단 퀵링크 바 (외부 웹페이지 링크) -->
+        <div id="bottom-quick-link-bar" class="w-full hidden mt-16 pt-8 pb-4"></div>
     </main>
 
     <!-- 푸터 -->
@@ -251,12 +254,17 @@
             blue: { bg: 'bg-blue-50', text: 'text-blue-500' }, green: { bg: 'bg-green-50', text: 'text-green-500' },
             purple: { bg: 'bg-purple-50', text: 'text-purple-500' }, orange: { bg: 'bg-orange-50', text: 'text-orange-500' },
             amber: { bg: 'bg-amber-50', text: 'text-amber-500' }, red: { bg: 'bg-red-50', text: 'text-red-500' },
-            gray: { bg: 'bg-gray-50', text: 'text-gray-500' }, teal: { bg: 'bg-teal-50', text: 'text-teal-500' }
+            gray: { bg: 'bg-gray-50', text: 'text-gray-500' }, teal: { bg: 'bg-teal-50', text: 'text-teal-500' },
+            pink: { bg: 'bg-pink-50', text: 'text-pink-500' }, indigo: { bg: 'bg-indigo-50', text: 'text-indigo-500' },
+            white: { bg: 'bg-white', text: 'text-gray-800' }
         };
         const colorNames = {
             blue: '🔵 파란색', green: '🟢 초록색', purple: '🟣 보라색', orange: '🟠 주황색',
-            amber: '🟡 노란색', red: '🔴 빨간색', gray: '⚫ 회색', teal: '💠 청록색'
+            amber: '🟡 노란색', red: '🔴 빨간색', gray: '⚫ 회색', teal: '💠 청록색', pink: '🌸 분홍색', indigo: '🌌 남색',
+            white: '⚪ 흰색 (기본)'
         };
+        
+        // 아이콘 대폭 추가
         const iconList = [
             { class: 'fa-folder', name: '폴더 (기본)' }, { class: 'fa-file-alt', name: '문서' },
             { class: 'fa-child', name: '어린이' }, { class: 'fa-book', name: '책' },
@@ -265,11 +273,22 @@
             { class: 'fa-exclamation', name: '중요/느낌표' }, { class: 'fa-info-circle', name: '정보/안내' },
             { class: 'fa-building', name: '건물/시설' }, { class: 'fa-users', name: '사용자/교직원' },
             { class: 'fa-clipboard-list', name: '게시판/목록' }, { class: 'fa-link', name: '링크/연결' },
-            { class: 'fa-check-square', name: '체크박스/할일' }
+            { class: 'fa-check-square', name: '체크박스/할일' }, { class: 'fa-external-link-alt', name: '외부링크' },
+            { class: 'fa-home', name: '홈/집' }, { class: 'fa-globe', name: '지구본/웹' },
+            { class: 'fa-phone', name: '전화기' }, { class: 'fa-envelope', name: '우편/메일' },
+            { class: 'fa-star', name: '별/즐겨찾기' }, { class: 'fa-bell', name: '종/알림' },
+            { class: 'fa-calendar-alt', name: '달력/일정' }, { class: 'fa-cog', name: '톱니바퀴/설정' },
+            { class: 'fa-camera', name: '카메라/사진' }, { class: 'fa-video', name: '비디오/영상' },
+            { class: 'fa-bullhorn', name: '확성기/공지' }, { class: 'fa-comments', name: '말풍선/대화' },
+            { class: 'fa-question-circle', name: '물음표/질문' }, { class: 'fa-paper-plane', name: '종이비행기/전송' },
+            { class: 'fa-download', name: '다운로드' }, { class: 'fa-images', name: '이미지/갤러리' }
         ];
 
         const defaultState = {
             pageTitle: '학교 업무 도움 데스크 매니저', copyright: '© Netsci 모든 권리 보유', contactEmail: '', masterPassword: '', columns: 3, rows: 2,
+            quickLinkPosition: 'top', 
+            quickLinkBarColor: 'white',
+            quickLinks: [], 
             categories: [{ 
                 id: 'cat_1', type: 'menu', title: '유치원', subtitle: '유치원 관련 업무자료', icon: 'fa-child', color: 'blue', password: '', link: '', colSpan: 1,
                 groups: [{ id: 'grp_1', title: '0. 일러두기 및 목록', icon: 'fa-exclamation', color: 'red', password: '', link: '', items: [{ title: '0. 일러두기', link: '#', password: '' }] }] 
@@ -282,6 +301,10 @@
             if (!data.copyright) data.copyright = '© Netsci 모든 권리 보유';
             if (data.contactEmail === undefined) data.contactEmail = '';
             if (data.masterPassword === undefined) data.masterPassword = '';
+            
+            if (data.quickLinkPosition === undefined) data.quickLinkPosition = 'top';
+            if (data.quickLinkBarColor === undefined) data.quickLinkBarColor = 'white';
+            if (!data.quickLinks) data.quickLinks = [];
 
             data.categories.forEach(cat => {
                 if(cat.type === undefined) cat.type = 'menu'; 
@@ -383,24 +406,47 @@
             const limit = window.appState.columns * window.appState.rows;
             const visibleCats = window.appState.categories.slice(0, limit);
 
-            // 메인 페이지 퀵 링크 바 렌더링
-            const quickLinksContainer = document.getElementById('main-quick-links');
-            if (quickLinksContainer) {
-                if (visibleCats.length > 0) {
-                    let qHtml = `<div class="flex flex-wrap justify-center gap-2 md:gap-3">`;
-                    visibleCats.forEach(cat => {
-                        const colors = palette[cat.color] || palette.blue;
-                        qHtml += `
-                            <button onclick="window.clickQuickLink('${cat.id}')" class="px-4 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full text-xs md:text-sm font-bold text-gray-700 hover:${colors.text} hover:border-blue-300 hover:bg-blue-50 shadow-sm transition-all transform hover:-translate-y-0.5 flex items-center">
-                                <i class="fas ${cat.icon} mr-2 ${colors.text} opacity-80"></i> ${cat.title}
-                            </button>
+            // 외부 퀵링크 바 (전체 설정 기반 통합 렌더링 - 99% 라운드 사각형 박스 형태 + 왼쪽 정렬)
+            const topQuickLinksContainer = document.getElementById('top-quick-link-bar');
+            const bottomQuickLinksContainer = document.getElementById('bottom-quick-link-bar');
+            
+            if (topQuickLinksContainer && bottomQuickLinksContainer) {
+                const qLinks = window.appState.quickLinks || [];
+                const qPosition = window.appState.quickLinkPosition || 'top';
+                const qColor = window.appState.quickLinkBarColor || 'white';
+                const barColorClass = palette[qColor] ? palette[qColor].bg : 'bg-white';
+
+                const renderLinkHtml = (links) => {
+                    if(links.length === 0) return '';
+                    // w-[99%] 및 왼쪽 정렬 (justify-start)
+                    let html = `<div class="w-[99%] max-w-6xl mx-auto ${barColorClass} bg-opacity-80 backdrop-blur-md shadow-md border border-gray-200/80 rounded-2xl p-4 flex flex-wrap justify-start items-center gap-3">`;
+                    html += links.map(ql => {
+                        const colors = palette[ql.color] || palette.blue;
+                        return `
+                            <a href="${formatUrl(ql.link)}" target="_blank" class="px-4 py-2 bg-white border border-gray-200 rounded-full text-xs md:text-sm font-bold ${colors.text} hover:${colors.bg} hover:border-current shadow-sm transition-all flex items-center transform hover:-translate-y-0.5">
+                                <i class="fas ${ql.icon} mr-1.5 opacity-80"></i> ${ql.title}
+                            </a>
                         `;
-                    });
-                    qHtml += `</div>`;
-                    quickLinksContainer.innerHTML = qHtml;
-                    quickLinksContainer.classList.remove('hidden');
+                    }).join('');
+                    html += `</div>`;
+                    return html;
+                };
+
+                if (qLinks.length > 0) {
+                    if (qPosition === 'top') {
+                        topQuickLinksContainer.innerHTML = renderLinkHtml(qLinks);
+                        topQuickLinksContainer.classList.remove('hidden');
+                        bottomQuickLinksContainer.classList.add('hidden');
+                        bottomQuickLinksContainer.innerHTML = '';
+                    } else {
+                        bottomQuickLinksContainer.innerHTML = renderLinkHtml(qLinks);
+                        bottomQuickLinksContainer.classList.remove('hidden');
+                        topQuickLinksContainer.classList.add('hidden');
+                        topQuickLinksContainer.innerHTML = '';
+                    }
                 } else {
-                    quickLinksContainer.classList.add('hidden');
+                    topQuickLinksContainer.classList.add('hidden');
+                    bottomQuickLinksContainer.classList.add('hidden');
                 }
             }
 
@@ -568,29 +614,6 @@
             }).join('') || `<div class="col-span-full py-20 text-center text-gray-500 bg-white rounded-xl border border-gray-100"><i class="fas fa-exclamation-circle text-3xl mb-3 text-gray-300"></i><p>설정된 메뉴가 없습니다.</p></div>`;
         }
 
-        window.clickQuickLink = function(catId) {
-            const el = document.getElementById('main-cat-card-' + catId);
-            if (el) {
-                const headerOffset = 100; 
-                const elementPosition = el.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-                
-                el.classList.add('ring-4', 'ring-blue-300', 'transition-all', 'duration-300');
-                setTimeout(() => el.classList.remove('ring-4', 'ring-blue-300'), 1500);
-            }
-            
-            const cat = window.appState.categories.find(c => c.id === catId);
-            if (cat) {
-                const content = document.getElementById(`${catId}-content`);
-                const isOpen = content && content.classList.contains('open');
-                
-                if (!isOpen || cat.type === 'board' || cat.type === 'todo' || (cat.link && cat.link !== '#')) {
-                    setTimeout(() => window.handleCategoryClick(null, catId), 300);
-                }
-            }
-        };
-
         window.handleCategoryClick = function(event, catId) {
             const cat = window.appState.categories.find(c => c.id === catId);
             if (!cat) return;
@@ -679,6 +702,18 @@
             }
             window.openBoardApp(catId);
             setTimeout(() => window.viewBoardPost(postId), 50);
+        };
+
+        window.handleMasterKeyClick = function() {
+            if (window.isMasterUnlocked) {
+                window.isMasterUnlocked = false; 
+                window.unlockedEntities.clear(); 
+                window.renderMain(); 
+                window.showToast('마스터 권한이 해제되어 다시 메뉴가 잠깁니다.', 'success');
+            } else { 
+                window.currentPendingTarget = { type: 'master' }; 
+                window.openPasswordModal(); 
+            }
         };
 
         window.pwFailedAttempts = 0;
@@ -1274,6 +1309,55 @@
                     </div>
                 </div>
 
+                <!-- 외부 웹페이지 퀵링크 바 설정 영역 -->
+                <div class="mb-6 bg-pink-50 p-4 md:p-5 rounded-xl border border-pink-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-sm font-bold text-pink-800"><i class="fas fa-external-link-alt text-pink-600 mr-1"></i> 외부 퀵링크 바 설정</h4>
+                        <button onclick="window.addQuickLink()" class="px-3 py-1.5 bg-white text-pink-600 border border-pink-300 hover:bg-pink-100 rounded-lg text-xs font-bold shadow-sm transition-colors flex items-center">+ 링크 추가</button>
+                    </div>
+                    
+                    <div class="mb-4 p-3 bg-pink-100/50 border border-pink-200 rounded-lg flex flex-col md:flex-row md:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-bold text-pink-800"><i class="fas fa-arrows-alt-v mr-1"></i> 퀵링크 바 위치</span>
+                            <div class="flex gap-2">
+                                <label class="flex items-center cursor-pointer bg-white px-2 py-1.5 rounded-md shadow-sm border border-pink-200">
+                                    <input type="radio" name="ql_position" value="top" ${window.draftState.quickLinkPosition === 'top' ? 'checked' : ''} onchange="window.updateGlobalQuickLinkPosition('top')" class="mr-1 text-pink-600 focus:ring-pink-500 w-3.5 h-3.5">
+                                    <span class="text-xs font-bold text-gray-700">상단 (제목 아래)</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer bg-white px-2 py-1.5 rounded-md shadow-sm border border-pink-200">
+                                    <input type="radio" name="ql_position" value="bottom" ${window.draftState.quickLinkPosition === 'bottom' ? 'checked' : ''} onchange="window.updateGlobalQuickLinkPosition('bottom')" class="mr-1 text-pink-600 focus:ring-pink-500 w-3.5 h-3.5">
+                                    <span class="text-xs font-bold text-gray-700">하단 (목록 아래)</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 mt-2 md:mt-0">
+                            <span class="text-xs font-bold text-pink-800"><i class="fas fa-fill-drip mr-1"></i> 바 바탕 색상</span>
+                            <select onchange="window.updateGlobalQuickLinkColor(this.value)" class="px-2 py-1.5 border border-pink-200 rounded text-xs outline-none focus:ring-1 focus:ring-pink-300 shadow-sm bg-white">
+                                ${Object.keys(palette).map(c => `<option value="${c}" ${window.draftState.quickLinkBarColor === c ? 'selected' : ''}>${colorNames[c]||c}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        ${window.draftState.quickLinks.map((ql, idx) => `
+                            <div class="flex flex-wrap lg:flex-nowrap items-center gap-2 bg-white p-3 rounded-lg border border-pink-100 shadow-sm">
+                                <input type="text" value="${ql.title}" onchange="window.updateQuickLink('${ql.id}', 'title', this.value)" placeholder="링크명" class="w-full lg:w-32 px-3 py-1.5 border rounded text-xs outline-none focus:ring-1 focus:ring-pink-300">
+                                <input type="text" value="${ql.link}" onchange="window.updateQuickLink('${ql.id}', 'link', this.value)" placeholder="https://..." class="w-full lg:flex-1 px-3 py-1.5 border rounded text-xs outline-none focus:ring-1 focus:ring-pink-300">
+                                <div class="w-full lg:w-32">${renderIconDropdown(ql.icon, `window.updateQuickLink('${ql.id}', 'icon', this.value)`)}</div>
+                                <select onchange="window.updateQuickLink('${ql.id}', 'color', this.value)" class="w-full lg:w-28 px-2 py-1.5 border rounded text-xs outline-none focus:ring-1 focus:ring-pink-300">
+                                    ${Object.keys(palette).map(c => `<option value="${c}" ${ql.color === c ? 'selected' : ''}>${colorNames[c]||c}</option>`).join('')}
+                                </select>
+                                <div class="flex gap-1 ml-auto lg:ml-2">
+                                    <button onclick="window.moveQuickLinkUp('${ql.id}')" class="w-7 h-7 bg-gray-50 border rounded text-gray-500 hover:bg-gray-200" ${idx===0?'disabled':''}><i class="fas fa-arrow-up text-[10px]"></i></button>
+                                    <button onclick="window.moveQuickLinkDown('${ql.id}')" class="w-7 h-7 bg-gray-50 border rounded text-gray-500 hover:bg-gray-200" ${idx===window.draftState.quickLinks.length-1?'disabled':''}><i class="fas fa-arrow-down text-[10px]"></i></button>
+                                    <button onclick="window.removeQuickLink('${ql.id}')" class="w-7 h-7 bg-red-50 border border-red-100 rounded text-red-500 hover:bg-red-500 hover:text-white"><i class="fas fa-times text-[10px]"></i></button>
+                                </div>
+                            </div>
+                        `).join('')}
+                        ${window.draftState.quickLinks.length === 0 ? '<div class="text-center text-xs text-pink-400 py-4 bg-white rounded border border-dashed border-pink-200">설정된 퀵링크가 없습니다.</div>' : ''}
+                    </div>
+                </div>
+
                 <div class="mb-6 bg-amber-50 p-4 md:p-5 rounded-xl border border-amber-200 shadow-sm">
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="text-sm font-bold text-amber-800"><i class="fas fa-location-arrow text-amber-600 mr-1"></i> 메인메뉴 빠른 이동</h4>
@@ -1475,6 +1559,41 @@
         window.toggleQuickReorderMode = function() {
             window.isQuickReorderMode = !window.isQuickReorderMode;
             window.renderSettingsBody(); 
+        };
+
+        // 외부 퀵링크 관리를 위한 새로운 함수들
+        window.updateGlobalQuickLinkPosition = (pos) => { window.draftState.quickLinkPosition = pos; window.renderSettingsBody(); };
+        window.updateGlobalQuickLinkColor = (color) => { window.draftState.quickLinkBarColor = color; window.renderSettingsBody(); };
+        
+        window.updateQuickLink = (id, field, value) => {
+            const ql = window.draftState.quickLinks.find(q => q.id === id);
+            if(ql) { ql[field] = value; window.renderSettingsBody(); }
+        };
+        window.addQuickLink = () => {
+            window.draftState.quickLinks.push({ id: generateId(), title: '새 링크', icon: 'fa-external-link-alt', color: 'pink', link: 'https://' });
+            window.renderSettingsBody();
+        };
+        window.removeQuickLink = (id) => {
+            window.draftState.quickLinks = window.draftState.quickLinks.filter(q => q.id !== id);
+            window.renderSettingsBody();
+        };
+        window.moveQuickLinkUp = (id) => {
+            const idx = window.draftState.quickLinks.findIndex(q => q.id === id);
+            if(idx > 0) {
+                const temp = window.draftState.quickLinks[idx - 1];
+                window.draftState.quickLinks[idx - 1] = window.draftState.quickLinks[idx];
+                window.draftState.quickLinks[idx] = temp;
+                window.renderSettingsBody();
+            }
+        };
+        window.moveQuickLinkDown = (id) => {
+            const idx = window.draftState.quickLinks.findIndex(q => q.id === id);
+            if(idx > -1 && idx < window.draftState.quickLinks.length - 1) {
+                const temp = window.draftState.quickLinks[idx + 1];
+                window.draftState.quickLinks[idx + 1] = window.draftState.quickLinks[idx];
+                window.draftState.quickLinks[idx] = temp;
+                window.renderSettingsBody();
+            }
         };
 
         window.updateCat = (id, field, value) => { const cat = window.draftState.categories.find(c => c.id === id); if(cat) { cat[field] = value; if(field === 'color' || field === 'type' || field === 'link' || field === 'colSpan') window.renderSettingsBody(); } };
